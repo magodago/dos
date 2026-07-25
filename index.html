@@ -6,417 +6,296 @@
 <title>D.O.S — David Operation System</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { width: 100%; height: 100%; overflow: hidden; background: #05050a; }
-  #game-container { width: 100%; height: 100%; }
-  canvas { display: block; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #05050a; font-family: 'Courier New', monospace; }
+  #game-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+  #ui-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 1; pointer-events: none;
+    display: flex; flex-direction: column; align-items: center;
+    padding-top: 12vh;
+  }
+  #ui-overlay * { pointer-events: auto; }
+
+  /* ── TÍTULO PRINCIPAL: neon hueco ── */
+  .title-main {
+    font-size: clamp(48px, 14vw, 120px);
+    font-weight: 900;
+    letter-spacing: 6px;
+    color: transparent;
+    -webkit-text-stroke: 3px #00ff41;
+    text-shadow:
+      0 0 10px rgba(0, 255, 65, 0.8),
+      0 0 25px rgba(0, 255, 65, 0.5),
+      0 0 50px rgba(0, 255, 65, 0.3),
+      0 0 100px rgba(0, 255, 65, 0.15);
+    opacity: 0;
+    animation: titleGlow 3s ease-out forwards;
+    animation-delay: 0.5s;
+  }
+  @keyframes titleGlow {
+    0% { opacity: 0; transform: scale(0.8); filter: blur(8px); }
+    60% { opacity: 1; transform: scale(1.05); filter: blur(0); }
+    100% { opacity: 1; transform: scale(1); filter: blur(0); }
+  }
+
+  /* ── SUBTÍTULO BRILLANTE ── */
+  .title-sub {
+    font-size: clamp(11px, 2.5vw, 20px);
+    font-weight: 700;
+    letter-spacing: 8px;
+    color: #ffffff;
+    text-shadow:
+      0 0 5px #00ff41,
+      0 0 15px #00ff41,
+      0 0 30px rgba(0, 255, 65, 0.7),
+      0 0 60px rgba(0, 255, 65, 0.4);
+    margin-top: 0.5vh;
+    opacity: 0;
+    animation: subFade 1.5s ease-out forwards;
+    animation-delay: 1.8s;
+  }
+  @keyframes subFade {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── TAGLINE ── */
+  .title-tag {
+    font-size: clamp(9px, 1.6vw, 14px);
+    font-weight: 400;
+    color: #ff0044;
+    letter-spacing: 4px;
+    margin-top: 1.5vh;
+    opacity: 0;
+    animation: tagFade 1.2s ease-out forwards;
+    animation-delay: 2.8s;
+  }
+  @keyframes tagFade {
+    0% { opacity: 0; }
+    100% { opacity: 0.8; }
+  }
+
+  /* ── BOTÓN START ── */
+  .btn-start {
+    margin-top: 10vh;
+    padding: 14px 40px;
+    background: transparent;
+    border: 1px solid rgba(0, 255, 65, 0.4);
+    border-radius: 4px;
+    color: #00ff41;
+    font-family: 'Courier New', monospace;
+    font-size: clamp(14px, 2.2vw, 22px);
+    font-weight: 700;
+    cursor: pointer;
+    pointer-events: auto;
+    opacity: 0;
+    animation: btnFade 1s ease-out forwards;
+    animation-delay: 3.8s;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+    letter-spacing: 3px;
+    position: relative;
+    overflow: hidden;
+  }
+  @keyframes btnFade {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .btn-start:hover {
+    border-color: #00ff41;
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.3), inset 0 0 20px rgba(0, 255, 65, 0.1);
+    color: #ffffff;
+  }
+  .btn-start .cursor {
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+  .btn-start.clicked {
+    animation: btnGlitchOut 0.8s ease-out forwards;
+  }
+  @keyframes btnGlitchOut {
+    0% { opacity: 1; transform: scale(1); }
+    20% { opacity: 1; transform: translateX(-5px) scale(1.02); filter: hue-rotate(90deg); }
+    40% { opacity: 0.8; transform: translateX(5px); }
+    60% { opacity: 0.6; transform: scale(1.1); filter: brightness(2); }
+    100% { opacity: 0; transform: scale(2); filter: brightness(3); }
+  }
+
+  /* ── VERSIÓN ── */
+  .version {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    font-size: 10px;
+    color: #333;
+    font-family: 'Courier New', monospace;
+    opacity: 0;
+    animation: subFade 1s ease-out forwards;
+    animation-delay: 4s;
+  }
+
+  /* ── GLITCH OVERLAY ── */
+  .glitch-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .glitch-overlay.active {
+    animation: glitchFlash 0.3s ease-out forwards;
+  }
+  @keyframes glitchFlash {
+    0% { opacity: 0; }
+    10% { opacity: 0.3; background: rgba(0, 255, 65, 0.15); }
+    20% { opacity: 0; }
+    30% { opacity: 0.2; background: rgba(255, 255, 255, 0.1); }
+    50% { opacity: 0; }
+    70% { opacity: 0.15; background: rgba(0, 255, 65, 0.1); }
+    100% { opacity: 0; }
+  }
 </style>
 </head>
 <body>
 <div id="game-container"></div>
+
+<div id="ui-overlay">
+  <div class="title-main">D.O.S</div>
+  <div class="title-sub">DAVID OPERATION SYSTEM</div>
+  <div class="title-tag">/// HACK THE SYSTEM ///</div>
+  <button class="btn-start" id="btnStart"><span>> </span>INITIALIZE<span class="cursor">_</span><span> <</span></button>
+  <div class="version">v1.0 // BUILD 2026</div>
+</div>
+
+<div class="glitch-overlay" id="glitchOverlay"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
 <script>
-// ─── SCENE: MENU PRINCIPAL ────────────────────────────────────────────────
-class MenuScene extends Phaser.Scene {
-  constructor() { super('MenuScene'); }
+// ─── SCENE: MENU BACKGROUND ────────────────────────────────────────────────
+class MenuBgScene extends Phaser.Scene {
+  constructor() { super('MenuBgScene'); }
 
   create() {
     const W = this.cameras.main.width;
     const H = this.cameras.main.height;
 
-    // ── Capa 1: Grid animado ──
-    this.gridGraphics = this.add.graphics();
+    // ── Grid animado ──
+    this.gridGfx = this.add.graphics();
     this.gridOffset = 0;
-    this.gridSpeed = 0.3;
 
-    // ── Capa 2: Matrix rain (digital rain) ──
+    // ── Matrix rain ──
+    this.rainGfx = this.add.graphics().setDepth(1);
     this.rainDrops = [];
-    const rainCount = Math.min(60, Math.floor(W / 12));
+    const rainCount = Math.min(50, Math.floor(W / 15));
     for (let i = 0; i < rainCount; i++) {
       this.rainDrops.push({
         x: Phaser.Math.Between(0, W),
         y: Phaser.Math.Between(-H, 0),
-        speed: Phaser.Math.Between(2, 6),
-        length: Phaser.Math.Between(5, 20),
-        chars: this.generateRainString(Phaser.Math.Between(5, 20))
+        speed: Phaser.Math.Between(2, 5),
+        length: Phaser.Math.Between(5, 18)
       });
     }
 
-    // Rain graphics (cleared each frame)
-    this.rainGraphics = this.add.graphics().setDepth(1);
-
-    // ── Capa 3: Partículas flotantes ──
+    // ── Partículas neón ──
     this.particles = [];
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 30; i++) {
       this.particles.push({
         x: Phaser.Math.Between(0, W),
         y: Phaser.Math.Between(0, H),
-        vx: Phaser.Math.FloatBetween(-0.3, 0.3),
-        vy: Phaser.Math.FloatBetween(-0.2, -0.6),
+        vx: Phaser.Math.FloatBetween(-0.2, 0.2),
+        vy: Phaser.Math.FloatBetween(-0.3, -0.6),
         size: Phaser.Math.FloatBetween(0.5, 2),
-        alpha: Phaser.Math.FloatBetween(0.1, 0.5)
+        alpha: Phaser.Math.FloatBetween(0.1, 0.4)
       });
     }
+    this.partGfx = this.add.graphics().setDepth(2);
 
-    // ── Capa 4: Título ──
-    const titleY = H * 0.18;
+    // ── Scanlines ──
+    this.scanGfx = this.add.graphics().setDepth(3);
+    this.scanGfx.fillStyle(0x000000, 0.03);
+    for (let y = 0; y < H; y += 3) {
+      this.scanGfx.fillRect(0, y, W, 1);
+    }
 
-    // Main title text (black fill + green stroke = neon hollow effect)
-    this.titleText = this.add.text(W / 2, titleY, 'D.O.S', {
-      fontSize: Math.min(110, Math.floor(W * 0.14)) + 'px',
-      fontFamily: 'Courier New, monospace',
-      fontStyle: 'bold',
-      color: '#000000',
-      stroke: '#00ff41',
-      strokeThickness: 4
-    }).setOrigin(0.5).setAlpha(0);
-
-    // Neon glow behind (wider, softer)
-    this.titleGlow1 = this.add.text(W / 2, titleY, 'D.O.S', {
-      fontSize: Math.min(110, Math.floor(W * 0.14)) + 'px',
-      fontFamily: 'Courier New, monospace',
-      fontStyle: 'bold',
-      color: '#00ff41',
-      stroke: '#00ff41',
-      strokeThickness: 12
-    }).setOrigin(0.5).setAlpha(0.25);
-
-    this.titleGlow2 = this.add.text(W / 2, titleY, 'D.O.S', {
-      fontSize: Math.min(110, Math.floor(W * 0.14)) + 'px',
-      fontFamily: 'Courier New, monospace',
-      fontStyle: 'bold',
-      color: '#00ff41',
-      stroke: '#00ff41',
-      strokeThickness: 30
-    }).setOrigin(0.5).setAlpha(0.1);
-
-    // ── Subtitle (brillante) ──
-    this.subtitle = this.add.text(W / 2, titleY + Math.min(60, Math.floor(W * 0.08)), 'DAVID OPERATION SYSTEM', {
-      fontSize: Math.min(18, Math.floor(W * 0.028)) + 'px',
-      fontFamily: 'Courier New, monospace',
-      fontStyle: 'bold',
-      color: '#ffffff',
-      stroke: '#00ff41',
-      strokeThickness: 2
-    }).setOrigin(0.5).setAlpha(0);
-
-    // Subtitle glow
-    this.subGlow = this.add.text(W / 2, titleY + Math.min(60, Math.floor(W * 0.08)), 'DAVID OPERATION SYSTEM', {
-      fontSize: Math.min(18, Math.floor(W * 0.028)) + 'px',
-      fontFamily: 'Courier New, monospace',
-      fontStyle: 'bold',
-      color: '#00ff41',
-      stroke: '#00ff41',
-      strokeThickness: 10
-    }).setOrigin(0.5).setAlpha(0.15);
-
-    // ── Tagline ──
-    this.tagline = this.add.text(W / 2, H * 0.28 + Math.min(85, Math.floor(W * 0.11)), '/// HACK THE SYSTEM ///', {
-      fontSize: Math.min(13, Math.floor(W * 0.02)) + 'px',
-      fontFamily: 'Courier New, monospace',
-      color: '#ff0044'
-    }).setOrigin(0.5).setAlpha(0);
-
-    // ── Version text ──
-    this.versionText = this.add.text(W - 15, H - 15, 'v1.0 // BUILD 2026', {
-      fontSize: '10px',
-      fontFamily: 'Courier New, monospace',
-      color: '#444'
-    }).setOrigin(1, 1).setAlpha(0);
-
-    // ── Botón START ──
-    const btnW = Math.min(260, W * 0.55);
-    const btnH = 56;
-    const btnX = W / 2;
-    const btnY = H * 0.68;
-
-    // Botón background
-    this.btnBg = this.add.graphics();
-    this.btnAlpha = 0;
-    this.btnPulse = 0;
-
-    // Botón texto
-    this.btnText = this.add.text(btnX, btnY, '>  INITIALIZE  <', {
-      fontSize: Math.min(22, Math.floor(W * 0.035)) + 'px',
-      fontFamily: 'Courier New, monospace',
-      fontStyle: 'bold',
-      color: '#00ff41'
-    }).setOrigin(0.5).setAlpha(0);
-
-    // Botón glow
-    this.btnGlow = this.add.graphics();
-
-    // Botón interactivo invisible
-    this.btnZone = this.add.zone(btnX, btnY, btnW, btnH).setInteractive({ useHandCursor: true });
-    this.btnZone.on('pointerover', () => { this.hovered = true; });
-    this.btnZone.on('pointerout', () => { this.hovered = false; });
-    this.btnZone.on('pointerdown', () => {
-      this.startGame();
-    });
-
-    this.hovered = false;
-    this.btnVisible = false;
-    this.canStart = false;
-
-    // ── Animación de entrada ──
-    this.entryProgress = 0;
-    this.entryPhase = 0; // 0=title, 1=subtitle, 2=tagline, 3=button, 4=ready
-
-    // ── Glitch timer ──
-    this.glitchTimer = 0;
-    this.originalTitle = 'D.O.S';
-    this.glitchTitle = 'D.O.S';
-
-    // ── Efecto scanline (overlay) ──
-    this.scanlines = this.add.graphics();
-
-    // ── Arranque: sonido de inicio simulado con Web Audio ──
+    // ── Startup sound ──
     this.playStartupSound();
-  }
-
-  generateRainString(len) {
-    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';
-    let s = '';
-    for (let i = 0; i < len; i++) s += chars[Math.floor(Math.random() * chars.length)];
-    return s;
   }
 
   playStartupSound() {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      // Low hum
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(55, ctx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + 0.8);
-      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.setValueAtTime(0.06, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 1.2);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1.2);
 
-      // Startup beep
       const osc2 = ctx.createOscillator();
       const gain2 = ctx.createGain();
       osc2.type = 'square';
       osc2.frequency.setValueAtTime(880, ctx.currentTime + 0.3);
       osc2.frequency.setValueAtTime(660, ctx.currentTime + 0.5);
       osc2.frequency.setValueAtTime(1320, ctx.currentTime + 0.7);
-      gain2.gain.setValueAtTime(0.06, ctx.currentTime + 0.3);
+      gain2.gain.setValueAtTime(0.05, ctx.currentTime + 0.3);
       gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
-      osc2.connect(gain2);
-      gain2.connect(ctx.destination);
-      osc2.start(ctx.currentTime + 0.3);
-      osc2.stop(ctx.currentTime + 1.0);
+      osc2.connect(gain2); gain2.connect(ctx.destination);
+      osc2.start(ctx.currentTime + 0.3); osc2.stop(ctx.currentTime + 1.0);
     } catch(e) {}
-  }
-
-  drawGrid() {
-    const W = this.cameras.main.width;
-    const H = this.cameras.main.height;
-    const g = this.gridGraphics;
-    g.clear();
-
-    const spacing = 40;
-    const offset = this.gridOffset;
-
-    g.lineStyle(0.5, 0x003300, 0.3);
-    for (let x = 0; x < W; x += spacing) {
-      g.beginPath();
-      g.moveTo(x, 0);
-      g.lineTo(x, H);
-      g.strokePath();
-    }
-    for (let y = -spacing + (offset % spacing); y < H; y += spacing) {
-      g.beginPath();
-      g.moveTo(0, y);
-      g.lineTo(W, y);
-      g.strokePath();
-    }
-
-    // Intersecciones brillantes
-    g.fillStyle(0x00ff41, 0.15);
-    for (let x = 0; x < W; x += spacing) {
-      for (let y = -spacing + (offset % spacing); y < H; y += spacing) {
-        g.fillRect(x - 1, y - 1, 2, 2);
-      }
-    }
-  }
-
-  // Rain drawn in update() via rainGraphics
-
-  drawScanlines() {
-    const W = this.cameras.main.width;
-    const H = this.cameras.main.height;
-    const g = this.scanlines;
-    g.clear();
-
-    // Horizontal scanlines
-    g.fillStyle(0x000000, 0.03);
-    for (let y = 0; y < H; y += 3) {
-      g.fillRect(0, y, W, 1);
-    }
-
-    // Vignette
-    const vignette = this.add.graphics();
-    // Radial gradient approximation
-    const steps = 20;
-    for (let i = 0; i < steps; i++) {
-      const t = i / steps;
-      const alpha = t * t * 0.6;
-      vignette.fillStyle(0x000000, alpha);
-      vignette.fillRect(0, 0, W, H);
-    }
-    vignette.setBlendMode(Phaser.BlendModes.MULTIPLY);
-    this.vignette = vignette;
-  }
-
-  startGame() {
-    if (!this.canStart) return;
-    this.canStart = false;
-
-    // Fade out with glitch effect
-    this.time.addEvent({
-      delay: 50,
-      repeat: 10,
-      callback: () => {
-        this.cameras.main.flash(50, 0, 255, 65);
-      }
-    });
-
-    this.cameras.main.fadeOut(800, 0, 0, 0);
-    this.cameras.main.once('camerafadeoutcomplete', () => {
-      this.scene.start('GameScene');
-    });
   }
 
   update(time, delta) {
     const W = this.cameras.main.width;
     const H = this.cameras.main.height;
+    const dt = delta / 16;
 
-    // ── Grid animation ──
-    this.gridOffset += this.gridSpeed * (delta / 16);
-    this.drawGrid();
+    // ── Grid ──
+    this.gridOffset += 0.3 * dt;
+    this.gridGfx.clear();
+    const sp = 40;
+    this.gridGfx.lineStyle(0.5, 0x003300, 0.25);
+    for (let x = 0; x < W; x += sp) {
+      this.gridGfx.beginPath(); this.gridGfx.moveTo(x, 0); this.gridGfx.lineTo(x, H); this.gridGfx.strokePath();
+    }
+    for (let y = -sp + (this.gridOffset % sp); y < H; y += sp) {
+      this.gridGfx.beginPath(); this.gridGfx.moveTo(0, y); this.gridGfx.lineTo(W, y); this.gridGfx.strokePath();
+    }
+    // Intersections
+    this.gridGfx.fillStyle(0x00ff41, 0.12);
+    for (let x = 0; x < W; x += sp)
+      for (let y = -sp + (this.gridOffset % sp); y < H; y += sp)
+        this.gridGfx.fillRect(x - 1, y - 1, 2, 2);
 
-    // ── Rain animation ──
-    this.rainGraphics.clear();
+    // ── Rain ──
+    this.rainGfx.clear();
     for (const drop of this.rainDrops) {
-      drop.y += drop.speed * (delta / 16);
+      drop.y += drop.speed * dt;
       if (drop.y > H + 20) {
         drop.y = -drop.length * 14;
         drop.x = Phaser.Math.Between(0, W);
-        drop.chars = this.generateRainString(Phaser.Math.Between(5, 20));
       }
-      const alpha = Phaser.Math.Clamp(1 - (drop.y / H), 0.05, 0.35);
-      this.rainGraphics.fillStyle(0x00ff41, alpha * 0.8);
-      this.rainGraphics.fillRect(drop.x - 2, drop.y - 5, 4, 5);
-      this.rainGraphics.fillStyle(0x00ff41, alpha * 0.06);
-      this.rainGraphics.fillRect(drop.x - 0.5, drop.y, 1, drop.length * 12);
+      const alpha = Phaser.Math.Clamp(1 - (drop.y / H), 0.05, 0.3);
+      this.rainGfx.fillStyle(0x00ff41, alpha * 0.7);
+      this.rainGfx.fillRect(drop.x - 2, drop.y - 5, 4, 5);
+      this.rainGfx.fillStyle(0x00ff41, alpha * 0.05);
+      this.rainGfx.fillRect(drop.x - 0.5, drop.y, 1, drop.length * 12);
     }
 
-    // ── Entry animation (cascade) ──
-    this.entryProgress += delta / 1000;
-
-    if (this.entryProgress > 1.0 && !this.titleShown) {
-      this.titleShown = true;
-      this.tweens.add({ targets: [this.titleText, this.titleGlow1, this.titleGlow2], alpha: { from: 0, to: 1 }, duration: 800, ease: 'Power2' });
-      const originalTitle = this.titleText.text;
-      // Glitch entrance
-      this.time.addEvent({
-        delay: 100, repeat: 5,
-        callback: () => {
-          this.titleText.setText(this.glitchText(originalTitle));
-        }
-      });
-      this.time.delayedCall(600, () => { this.titleText.setText(originalTitle); });
+    // ── Particles ──
+    this.partGfx.clear();
+    for (const p of this.particles) {
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      if (p.y < -10) { p.y = H + 10; p.x = Phaser.Math.Between(0, W); }
+      if (p.x < -10 || p.x > W + 10) p.vx *= -1;
+      this.partGfx.fillStyle(0x00ff41, p.alpha);
+      this.partGfx.fillCircle(p.x, p.y, p.size);
     }
-
-    if (this.entryProgress > 2.0 && !this.subShown) {
-      this.subShown = true;
-      this.tweens.add({ targets: [this.subtitle, this.subGlow], alpha: 1, duration: 600, ease: 'Power2' });
-    }
-
-    if (this.entryProgress > 3.0 && !this.tagShown) {
-      this.tagShown = true;
-      this.tweens.add({ targets: this.tagline, alpha: 0.7, duration: 500, ease: 'Power2' });
-    }
-
-    if (this.entryProgress > 4.0 && !this.btnShown) {
-      this.btnShown = true;
-      this.btnVisible = true;
-      this.tweens.add({ targets: [this.btnText, this.versionText], alpha: 1, duration: 600, ease: 'Power2' });
-      this.time.delayedCall(500, () => { this.canStart = true; });
-    }
-
-    // ── Glitch effect on title (occasional) ──
-    this.glitchTimer += delta;
-    if (this.glitchTimer > Phaser.Math.Between(2000, 5000) && this.titleShown) {
-      this.glitchTimer = 0;
-      this.glitchTitle = this.titleText.text;
-      const glitchCount = Phaser.Math.Between(1, 4);
-      let count = 0;
-      const glitchInterval = this.time.addEvent({
-        delay: 50,
-        repeat: glitchCount * 2,
-        callback: () => {
-          count++;
-          if (count % 2 === 1) {
-            this.titleText.setText(this.glitchText(this.originalTitle));
-            // White flash
-            this.titleText.setColor('#ffffff');
-          } else {
-            this.titleText.setText(this.originalTitle);
-            this.titleText.setColor('#00ff41');
-          }
-        }
-      });
-    }
-
-    // ── Botón pulsante ──
-    if (this.btnVisible) {
-      this.btnPulse += delta / 1000;
-      const pulse = 0.6 + 0.4 * Math.sin(this.btnPulse * 2.5);
-      const btnW = Math.min(260, W * 0.55);
-      const btnX = W / 2;
-      const btnY = H * 0.68;
-
-      this.btnBg.clear();
-      this.btnBg.fillStyle(0x003300, 0.08 * pulse);
-      this.btnBg.fillRoundedRect(btnX - btnW/2, btnY - 28, btnW, 56, 4);
-      this.btnBg.lineStyle(1, 0x00ff41, 0.4 * pulse);
-      this.btnBg.strokeRoundedRect(btnX - btnW/2, btnY - 28, btnW, 56, 4);
-
-      // Glow on hover
-      this.btnGlow.clear();
-      if (this.hovered) {
-        this.btnGlow.fillStyle(0x00ff41, 0.05);
-        this.btnGlow.fillRoundedRect(btnX - btnW/2 - 10, btnY - 38, btnW + 20, 76, 8);
-        this.btnText.setColor('#ffffff');
-      } else {
-        this.btnText.setColor('#00ff41');
-      }
-
-      // Blink cursor on button
-      const cursor = Math.sin(this.btnPulse * 4) > 0 ? '_' : ' ';
-      this.btnText.setText('>  INITIALIZE' + cursor + '  <');
-    }
-
-    // ── Rain graphics cleanup ──
-    // Keep only the latest rain graphics
-  }
-
-  glitchText(str) {
-    const chars = '!@#$%^&*<>?/\\|[]{}';
-    let result = '';
-    for (const c of str) {
-      if (Math.random() < 0.3) {
-        result += chars[Math.floor(Math.random() * chars.length)];
-      } else {
-        result += c;
-      }
-    }
-    return result;
   }
 }
 
@@ -427,22 +306,20 @@ class GameScene extends Phaser.Scene {
   create() {
     const W = this.cameras.main.width;
     const H = this.cameras.main.height;
+    this.cameras.main.setBackgroundColor('#05050a');
 
-    // Placeholder
-    this.add.text(W/2, H/2, 'GAME LOADING...', {
-      fontSize: '24px', fontFamily: 'Courier New, monospace', color: '#00ff41'
+    this.add.text(W/2, H/2 - 30, 'GAME LOADING...', {
+      fontSize: '22px', fontFamily: 'Courier New, monospace', fontStyle: 'bold', color: '#00ff41'
     }).setOrigin(0.5);
 
-    this.add.text(W/2, H/2 + 50, 'Press SPACE to return', {
-      fontSize: '14px', fontFamily: 'Courier New, monospace', color: '#666'
+    this.add.text(W/2, H/2 + 20, 'Press SPACE to return', {
+      fontSize: '13px', fontFamily: 'Courier New, monospace', color: '#555'
     }).setOrigin(0.5);
 
-    this.input.keyboard.on('keydown-ENTER', () => { if (this.canStart) this.startGame(); });
-    this.input.keyboard.on('keydown-SPACE', () => { if (this.canStart) this.startGame(); });
     this.input.keyboard.once('keydown-SPACE', () => {
       this.cameras.main.fadeOut(500, 0, 0, 0);
       this.cameras.main.once('camerafadeoutcomplete', () => {
-        this.scene.start('MenuScene');
+        location.reload();
       });
     });
   }
@@ -456,14 +333,33 @@ const config = {
   height: Math.min(window.innerHeight, 900),
   backgroundColor: '#05050a',
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-  scene: [MenuScene, GameScene]
+  scene: [MenuBgScene, GameScene]
 };
 
 const game = new Phaser.Game(config);
 
-// Resize handler
-window.addEventListener('resize', () => {
-  // Phaser Scale.FIT handles resize automatically
+// ─── UI EVENTS ─────────────────────────────────────────────────────────────
+const btn = document.getElementById('btnStart');
+const overlay = document.getElementById('glitchOverlay');
+
+btn.addEventListener('click', () => {
+  if (btn.classList.contains('clicked')) return;
+  btn.classList.add('clicked');
+
+  // Glitch flash overlay
+  overlay.classList.add('active');
+  setTimeout(() => overlay.classList.remove('active'), 400);
+
+  // Phaser camera flash
+  const scene = game.scene.getScene('MenuBgScene');
+  if (scene) scene.cameras.main.flash(300, 0, 255, 65);
+
+  // Transition
+  setTimeout(() => {
+    document.getElementById('ui-overlay').style.display = 'none';
+    game.scene.stop('MenuBgScene');
+    game.scene.start('GameScene');
+  }, 800);
 });
 </script>
 </body>
