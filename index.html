@@ -112,22 +112,56 @@ class BootScene extends Phaser.Scene {
   }
 
   setupTextures() {
-    // Player
+    // Player texture (premium) - cyberpunk figure
     const pg = this.make.graphics({ add: false });
-    pg.fillStyle(0x00ff41, 0.15); pg.fillCircle(24,24,24);
-    pg.fillStyle(0x00ff41, 0.3); pg.fillCircle(24,24,18);
-    pg.fillStyle(0x00ff41, 0.9); pg.fillCircle(24,24,12);
-    pg.fillStyle(0xe0ffe0, 1); pg.fillCircle(24,24,6);
-    pg.fillStyle(0x000000, 1); pg.fillCircle(19,22,2.5); pg.fillCircle(29,22,2.5);
-    pg.fillStyle(0xffffff, 1); pg.fillCircle(19,22,1); pg.fillCircle(29,22,1);
+    // Outer glow aura
+    pg.fillStyle(0x00ff41, 0.1); pg.fillCircle(24,24,26);
+    pg.fillStyle(0x00cc33, 0.15); pg.fillCircle(24,24,22);
+    // Body/torso (trench coat)
+    pg.fillStyle(0x0a1a0a, 1);
+    pg.beginPath(); pg.moveTo(14, 22); pg.lineTo(34, 22); pg.lineTo(36, 40); pg.lineTo(28, 42);
+    pg.lineTo(28, 48); pg.lineTo(20, 48); pg.lineTo(20, 42); pg.lineTo(12, 40); pg.closePath();
+    pg.fillPath();
+    // Coat glow outline
+    pg.lineStyle(1, 0x00ff41, 0.4);
+    pg.beginPath(); pg.moveTo(14, 22); pg.lineTo(34, 22); pg.lineTo(36, 40);
+    pg.lineTo(28, 42); pg.lineTo(28, 48); pg.lineTo(20, 48); pg.lineTo(20, 42);
+    pg.lineTo(12, 40); pg.closePath(); pg.strokePath();
+    // Head
+    pg.fillStyle(0x1a2a1a, 1); pg.fillCircle(24, 16, 8);
+    pg.lineStyle(1, 0x00ff41, 0.6); pg.strokeCircle(24, 16, 8);
+    // Eyes (glowing)
+    pg.fillStyle(0x00ff41, 1); pg.fillCircle(21, 15, 1.5); pg.fillCircle(27, 15, 1.5);
+    pg.fillStyle(0xffffff, 0.8); pg.fillCircle(21, 15, 0.8); pg.fillCircle(27, 15, 0.8);
+    // Cape trail
+    pg.fillStyle(0x0d1a0d, 0.8);
+    pg.beginPath(); pg.moveTo(12, 40); pg.lineTo(6, 46); pg.lineTo(8, 38); pg.closePath(); pg.fillPath();
+    pg.beginPath(); pg.moveTo(36, 40); pg.lineTo(42, 46); pg.lineTo(40, 38); pg.closePath(); pg.fillPath();
     pg.generateTexture('player', 48, 48); pg.destroy();
 
-    // Platform
+    // Platform texture (premium) - terminal window style
     const plg = this.make.graphics({ add: false });
-    plg.fillStyle(0x0a1a0a, 1); plg.fillRoundedRect(0,0,80,16,3);
-    plg.lineStyle(1, 0x00ff41, 0.6); plg.strokeRoundedRect(0,0,80,16,3);
-    plg.lineStyle(0.5, 0x00ff41, 0.2); plg.beginPath(); plg.moveTo(2,2); plg.lineTo(78,2); plg.strokePath();
-    plg.generateTexture('platform', 80, 16); plg.destroy();
+    // Dark panel background
+    plg.fillStyle(0x0d1a0d, 1);
+    plg.fillRoundedRect(0, 0, 88, 20, 3);
+    // Header bar (like a terminal window title bar)
+    plg.fillStyle(0x00ff41, 0.15);
+    plg.fillRoundedRect(1, 1, 86, 6, {tl:2, tr:2, bl:0, br:0});
+    // Header dots (minimize, maximize, close - cyberpunk style)
+    plg.fillStyle(0xff0044, 0.8); plg.fillCircle(12, 4, 2);
+    plg.fillStyle(0xffaa00, 0.8); plg.fillCircle(19, 4, 2);
+    plg.fillStyle(0x00ff41, 0.8); plg.fillCircle(26, 4, 2);
+    // Border glow
+    plg.lineStyle(1, 0x00ff41, 0.7);
+    plg.strokeRoundedRect(0, 0, 88, 20, 3);
+    // Inner scanline
+    plg.lineStyle(0.5, 0x00ff41, 0.1);
+    plg.beginPath(); plg.moveTo(2, 10); plg.lineTo(86, 10); plg.strokePath();
+    // Text simulation
+    plg.fillStyle(0x00ff41, 0.08);
+    plg.fillRect(5, 12, 78, 6);
+    plg.generateTexture('platform', 88, 20);
+    plg.destroy();
 
     // Particle
     const ptg = this.make.graphics({ add: false });
@@ -150,7 +184,7 @@ class BootScene extends Phaser.Scene {
     this.platformGroup.visible = false;
 
     this.player = this.physics.add.sprite(W/2, 60, 'player');
-    this.player.body.setCircle(12, 12, 8);
+    this.player.body.setSize(20, 28, 14, 14); // Rect body covers torso area
     this.player.setCollideWorldBounds(false);
     this.player.setBounce(0);
     this.player.body.setAllowGravity(false);
@@ -169,7 +203,12 @@ class BootScene extends Phaser.Scene {
     }).setDepth(11);
     this.landParticles.visible = false;
 
-    this.physics.add.collider(this.player, this.platformGroup, this.onLand, null, this);
+    this.physics.add.collider(this.player, this.platformGroup, this.onLand, (player, platform) => {
+      // One-way: only collide when player is FALLING and is above platform top
+      const pBottom = player.body.y + player.body.height;
+      const pTop = platform.body.y;
+      return player.body.velocity.y >= 0 && pBottom <= pTop + 12;
+    }, this);
   }
 
   setupBackground() {
