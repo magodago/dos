@@ -292,6 +292,7 @@ class BootScene extends Phaser.Scene {
     }
     this.mode = 'game';
     this.gameOver = false;
+    this.endingShown = false;
     this.score = 0;
     this.moveDir = 0;
     this.highestY = Infinity;
@@ -405,39 +406,45 @@ class BootScene extends Phaser.Scene {
   onEnemyHit(player, enemy) {
     if (this.gameOver) return;
     this.gameOver = true;
-    this.player.body.setVelocity(0, -200);
-    this.player.body.setAllowGravity(true);
-    this.player.setTint(0xff0044);
-    const ex = enemy.x, ey = enemy.y;
-    this.time.delayedCall(50, () => {
-      this.endGame(ex, ey);
+
+    // Disable physics interactions immediately (never destroy in callback)
+    player.body.setVelocity(0, 0);
+    player.body.setAllowGravity(false);
+    player.setTint(0xff0044);
+
+    // Schedule game over screen on next frame
+    this.time.delayedCall(16, () => {
+      this.showGameOver(enemy.x, enemy.y);
     });
   }
 
-  // ── GAME OVER ──────────────────────────────────────────────────────────
-  endGame(enemyX, enemyY) {
-    if (this.mode !== 'game') return;
-    this.gameOver = true;
-    this.player.body.setVelocity(0, 0);
-    this.player.body.setAllowGravity(false);
-    this.tweenPlayerDeath();
+  showGameOver(ex, ey) {
+    if (this.endingShown) return;
+    this.endingShown = true;
 
-    // Shake + particles on enemy death
-    if (enemyX != null) {
-      for (let i = 0; i < 20; i++) this.landParticles.emitParticleAt(enemyX, enemyY);
-      this.cameras.main.shake(250, 0.015);
+    // Effects
+    for (let i = 0; i < 20; i++) {
+      this.landParticles.emitParticleAt(ex, ey);
     }
-    // Destroy all enemies safely
-    for (const e of this.enemies) { if (e && e.active) e.destroy(); }
-    this.enemies = [];
+    this.cameras.main.shake(300, 0.02);
 
-    // Save high score
+    // Destroy all enemies after physics is done
+    this.time.delayedCall(100, () => {
+      for (const e of this.enemies) { if (e && e.active) e.destroy(); }
+      this.enemies = [];
+    });
+
+    // Save score
     const prev = parseInt(localStorage.getItem('dos_highscore') || '0');
     if (this.score > prev) localStorage.setItem('dos_highscore', '' + this.score);
 
     const W = GW, H = GH;
     const scrollY = this.cameras.main.scrollY;
 
+    // Hide player
+    this.player.setVisible(false);
+
+    // Overlay
     this.add.rectangle(W/2, H/2 - scrollY, W, H, 0x000000, 0.75).setDepth(200);
     this.add.text(W/2, H/2 - 85 - scrollY, 'SYSTEM FAILURE', {
       fontSize:'30px', fontFamily:'Courier New, monospace', fontStyle:'bold', color:'#ff0044',
@@ -450,7 +457,6 @@ class BootScene extends Phaser.Scene {
       fontSize:'13px', fontFamily:'Courier New, monospace', color:'#666'
     }).setOrigin(0.5).setDepth(201);
 
-    // RESTART button
     const restartBtn = this.add.text(W/2 - 80, H/2 + 40 - scrollY, '>  RESTART  <', {
       fontSize:'15px', fontFamily:'Courier New, monospace', fontStyle:'bold', color:'#00ff41'
     }).setOrigin(0.5).setDepth(201).setInteractive({ useHandCursor: true });
@@ -458,7 +464,6 @@ class BootScene extends Phaser.Scene {
     restartBtn.on('pointerover', () => restartBtn.setColor('#ffffff'));
     restartBtn.on('pointerout', () => restartBtn.setColor('#00ff41'));
 
-    // HOME button
     const homeBtn = this.add.text(W/2 + 80, H/2 + 40 - scrollY, '[ HOME ]', {
       fontSize:'15px', fontFamily:'Courier New, monospace', fontStyle:'bold', color:'#555'
     }).setOrigin(0.5).setDepth(201).setInteractive({ useHandCursor: true });
@@ -469,11 +474,6 @@ class BootScene extends Phaser.Scene {
     this.input.keyboard.once('keydown-SPACE', () => { location.href = location.pathname + '?restart=1'; });
     this.input.keyboard.once('keydown-ENTER', () => { location.href = location.pathname + '?restart=1'; });
     this.input.keyboard.once('keydown-ESC', () => { location.reload(); });
-  }
-
-  tweenPlayerDeath() {
-    this.tweens.add({ targets: this.player, alpha: 0, duration: 800, ease: 'Power2' });
-    this.tweens.add({ targets: this.player, angle: 180, duration: 600, ease: 'Power2' });
   }
 
   // ── UPDATE ─────────────────────────────────────────────────────────────
@@ -541,7 +541,9 @@ class BootScene extends Phaser.Scene {
     this.platformGroup.children.each((p) => { if (p.y > this.player.y + H + 200) p.destroy(); });
 
     // Game over
-    if (this.player.y > H + 150) this.endGame();
+    if (this.player.y > H + 150) {
+      this.showGameOver(this.player.x, this.player.y);
+    }
 
     // Track height
     if (this.player.y < this.highestY) {
