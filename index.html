@@ -72,6 +72,10 @@ const LAYERS = [
 class BootScene extends Phaser.Scene {
   constructor() { super('BootScene'); }
 
+  preload(){
+    this.load.image('player', 'assets/player.png');
+  }
+
   create() {
     this.mode = 'menu';
     this.gameOver = false;
@@ -105,11 +109,6 @@ class BootScene extends Phaser.Scene {
 
   // ── TEXTURES ──────────────────────────────────────────────────────────
   setupTextures() {
-    // Player base sprite
-    const pg = this.make.graphics({ add: false });
-    this.drawPlayerTo(pg, 0, 0, 1);
-    pg.generateTexture('player', 48, 48); pg.destroy();
-
     // Platform
     const plg = this.make.graphics({ add: false });
     plg.fillStyle(0x0d1a0d,1); plg.fillRoundedRect(0,0,88,20,3);
@@ -224,8 +223,9 @@ class BootScene extends Phaser.Scene {
     this.player.setBounce(0);
     this.player.body.setAllowGravity(false);
     this.player.setDepth(10);
-    this.player.visible = false;
-    this.player.setAlpha(0); // Invisible - overlay draws the character
+    this.player.visible = true;
+    this.player.setAlpha(1);
+    this.player.setScale(1.5);
     this.player.squashTween = 1;
     this.player.landedTime = 0;
 
@@ -573,9 +573,11 @@ class BootScene extends Phaser.Scene {
 
     // No rotation — overlay always faces forward
 
-    // ── PLAYER ANIMATION (cape + aura overlay) ──
+    // ── PLAYER ANIMATION (glow aura only) ──
     this.playerOverlay.clear();
-    this.drawPlayerTo(this.playerOverlay, this.player.x - 24, this.player.y - 24, this.animTime + this.animTime * 0.2);
+    // Outer glow ring
+    this.playerOverlay.lineStyle(2, 0x00ff41, 0.08);
+    this.playerOverlay.strokeCircle(this.player.x, this.player.y, 30 + Math.sin(this.animTime * 2) * 4);
 
     // ── TRAIL ──
     this.trailGfx.clear();
