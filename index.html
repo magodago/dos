@@ -486,8 +486,8 @@ class BootScene extends Phaser.Scene {
     }
 
     // ── GAME OVER CHECK ──
-    if (this.gameOver && !this.endingShown) {
-      this.showGameOver();
+    if (this.gameOver) {
+      if (!this.endingShown) this.showGameOver();
       return;
     }
 
