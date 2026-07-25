@@ -329,7 +329,7 @@ class BootScene extends Phaser.Scene {
     this.platformGlowGfx = this.add.graphics().setDepth(3);
 
     // Scrolling background (TileSprite)
-    this.bgTile = this.add.tileSprite(0, 0, GW, GH * 2, '__DEFAULT').setOrigin(0,0).setDepth(-3).setAlpha(0.8);
+    this.bgTile = this.add.tileSprite(0, 0, GW, GH * 2, '__DEFAULT').setOrigin(0,0).setDepth(-3).setAlpha(0.8).setScrollFactor(0);
     this.bgImg = new Image();
     this.bgImg.onload = () => {
       try {
