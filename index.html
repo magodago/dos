@@ -62,17 +62,22 @@
   /* ── TAGLINE ── */
   .title-tag {
     font-size: clamp(9px, 1.6vw, 14px);
-    font-weight: 400;
-    color: #ff0044;
+    font-weight: 700;
+    color: #ff1744;
     letter-spacing: 4px;
     margin-top: 1.5vh;
+    text-shadow:
+      0 0 5px #ff1744,
+      0 0 15px rgba(255, 23, 68, 0.7),
+      0 0 30px rgba(255, 23, 68, 0.4),
+      0 0 60px rgba(255, 23, 68, 0.2);
     opacity: 0;
     animation: tagFade 1.2s ease-out forwards;
     animation-delay: 2.8s;
   }
   @keyframes tagFade {
     0% { opacity: 0; }
-    100% { opacity: 0.8; }
+    100% { opacity: 1; }
   }
 
   /* ── BOTÓN START ── */
