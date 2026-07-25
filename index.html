@@ -107,33 +107,31 @@ class BootScene extends Phaser.Scene {
 
   // ── TEXTURES ──────────────────────────────────────────────────────────
   setupTextures() {
-    // Player sprite — HIGH CONTRAST (body bright green, no dark colors)
+    // Player sprite — SQUARE BODY, NO OVERLAY
     const pg = this.make.graphics({ add: false });
-    // Body (bright green trench coat)
-    pg.fillStyle(0x00cc33, 1);
-    pg.fillRoundedRect(14, 22, 20, 22, 3);
+    // Body (bright green rectangle, clearly not a ball)
     pg.fillStyle(0x00ff41, 1);
-    pg.fillRect(14, 18, 20, 8);
-    // Coat outline
-    pg.lineStyle(2, 0x66ffaa, 1);
-    pg.strokeRoundedRect(14, 22, 20, 22, 3);
-    // Coat tails
-    pg.lineStyle(2, 0x66ffaa, 1);
-    pg.beginPath(); pg.moveTo(14, 22); pg.lineTo(8, 44); pg.strokePath();
-    pg.beginPath(); pg.moveTo(34, 22); pg.lineTo(40, 44); pg.strokePath();
+    pg.fillRect(10, 20, 28, 24);
+    pg.fillStyle(0x33ff77, 1);
+    pg.fillRect(10, 18, 28, 6);
+    // Shoulders
+    pg.fillStyle(0x00dd33, 1);
+    pg.fillRect(8, 16, 32, 6);
+    // Coat center line
+    pg.lineStyle(1, 0xffffff, 0.5);
+    pg.beginPath(); pg.moveTo(24, 20); pg.lineTo(24, 44); pg.strokePath();
     // Head
-    pg.fillStyle(0xcc9966, 1);
-    pg.fillCircle(24, 12, 9);
-    // Hair
+    pg.fillStyle(0xffcc99, 1);
+    pg.fillRect(17, 4, 14, 14);
     pg.fillStyle(0x332211, 1);
-    pg.fillCircle(24, 9, 8);
-    // Eyes — bright
+    pg.fillRect(17, 4, 14, 6);
+    // Eyes
     pg.fillStyle(0xffffff, 1);
-    pg.fillCircle(21, 13, 3);
-    pg.fillCircle(27, 13, 3);
+    pg.fillRect(19, 10, 3, 3);
+    pg.fillRect(26, 10, 3, 3);
     pg.fillStyle(0x00ff41, 1);
-    pg.fillCircle(21, 13, 1.5);
-    pg.fillCircle(27, 13, 1.5);
+    pg.fillRect(20, 11, 1, 1);
+    pg.fillRect(27, 11, 1, 1);
     pg.generateTexture('player', 48, 48);
     pg.destroy();
 
@@ -601,11 +599,8 @@ class BootScene extends Phaser.Scene {
 
     // No rotation — overlay always faces forward
 
-    // ── PLAYER VISUAL ──
+    // ── PLAYER VISUAL ── (no overlay — sprite is self-contained)
     this.playerOverlay.clear();
-    // Player glow aura
-    this.playerOverlay.fillStyle(0x00ff41, 0.08 + 0.04 * Math.sin(this.animTime * 2));
-    this.playerOverlay.fillCircle(this.player.x, this.player.y, 28);
 
     // ── TRAIL ──
     this.trailGfx.clear();
