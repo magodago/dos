@@ -218,14 +218,15 @@ class BootScene extends Phaser.Scene {
     this.platformGroup.visible = false;
 
     this.player = this.physics.add.sprite(W/2, 60, 'player');
-    this.player.body.setSize(20, 28, 14, 14);
+    this.player.body.setSize(48, 64);
     this.player.setCollideWorldBounds(false);
     this.player.setBounce(0);
     this.player.body.setAllowGravity(false);
     this.player.setDepth(10);
     this.player.visible = true;
     this.player.setAlpha(1);
-    this.player.setScale(1.5);
+    this.player.setTint(0xff00ff); // TEMP: purple tint to verify sprite loads
+    this.player.setScale(2.5);
     this.player.squashTween = 1;
     this.player.landedTime = 0;
 
@@ -573,11 +574,11 @@ class BootScene extends Phaser.Scene {
 
     // No rotation — overlay always faces forward
 
-    // ── PLAYER ANIMATION (glow aura only) ──
+    // ── PLAYER VISUAL ──
     this.playerOverlay.clear();
-    // Outer glow ring
-    this.playerOverlay.lineStyle(2, 0x00ff41, 0.08);
-    this.playerOverlay.strokeCircle(this.player.x, this.player.y, 30 + Math.sin(this.animTime * 2) * 4);
+    // Player glow aura (very subtle)
+    this.playerOverlay.lineStyle(2, 0x00ff41, 0.05);
+    this.playerOverlay.strokeCircle(this.player.x, this.player.y, 34);
 
     // ── TRAIL ──
     this.trailGfx.clear();
