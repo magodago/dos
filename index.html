@@ -27,6 +27,7 @@
   .glitch-overlay { position:fixed; top:0; left:0; width:100%; height:100%; z-index:2; pointer-events:none; opacity:0; }
   .glitch-overlay.active { animation:glitchFlash 0.3s ease-out forwards; }
   @keyframes glitchFlash { 0%{opacity:0} 10%{opacity:0.3;background:rgba(0,255,65,0.15)} 20%{opacity:0} 30%{opacity:0.2;background:rgba(255,255,255,0.1)} 50%{opacity:0} 70%{opacity:0.15;background:rgba(0,255,65,0.1)} 100%{opacity:0} }
+  .high-score { position:absolute; bottom:60px; left:0; width:100%; text-align:center; font-size:12px; color:#333; font-family:'Courier New',monospace; opacity:0; animation:subFade 1s ease-out forwards; animation-delay:4.5s; }
   #game-hud { display:none; position:absolute; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; }
   #game-hud .hud-height { position:absolute; top:15px; left:15px; font-size:14px; font-weight:bold; color:#00ff41; text-shadow:0 0 5px rgba(0,255,65,0.5); }
   #game-hud .hud-layer { position:absolute; top:15px; right:15px; font-size:11px; }
@@ -41,6 +42,7 @@
   <div class="title-tag">/// HACK THE SYSTEM ///</div>
   <button class="btn-start" id="btnStart"><span>> </span>INITIALIZE<span class="cursor">_</span><span> <</span></button>
   <div class="version">v2.0 // BUILD 2026</div>
+  <div class="high-score" id="highScore"></div>
 </div>
 <div id="game-hud">
   <div class="hud-height" id="hudHeight">HEIGHT: 0m</div>
@@ -77,12 +79,21 @@ class BootScene extends Phaser.Scene {
     this.speedLines = [];
     this.lastMilestone = 0;
 
+    // Show high score on menu
+    const hs = localStorage.getItem('dos_highscore');
+    document.getElementById('highScore').textContent = hs ? 'BEST // ' + hs + 'm' : '';
+
     this.setupTextures();
     this.setupGame();
     this.setupBackground();
     this.setupInput();
     this.startMenuEffects();
     this.playStartupSound();
+
+    // Auto-start if ?restart=1
+    if (location.search.includes('restart=1')) {
+      this.time.delayedCall(1500, () => this.startGame());
+    }
   }
 
   // ── TEXTURES ──────────────────────────────────────────────────────────
@@ -207,13 +218,14 @@ class BootScene extends Phaser.Scene {
     this.player.body.setAllowGravity(false);
     this.player.setDepth(10);
     this.player.visible = false;
+    this.player.setAlpha(0); // Invisible - overlay draws the character
     this.player.squashTween = 1;
     this.player.landedTime = 0;
 
     this.cameras.main.setBounds(0, -PS.WORLD_LIMIT, W, PS.WORLD_LIMIT + H);
     this.cameras.main.stopFollow();
 
-    // Player overlay (cape, aura drawn each frame)
+    // Player overlay (draws the actual character each frame - sprite stays invisible)
     this.playerOverlay = this.add.graphics().setDepth(11);
 
     // Trail
@@ -291,7 +303,7 @@ class BootScene extends Phaser.Scene {
     this.player.clearTint();
     this.player.setDepth(10);
     this.player.squashTween = 1;
-    this.player.alpha = 1;
+    this.player.alpha = 0; // Invisible - overlay draws character
 
     this.platformGroup.visible = true;
     this.platformGroup.clear(true, true);
@@ -389,15 +401,18 @@ class BootScene extends Phaser.Scene {
   onEnemyHit(player, enemy) {
     if (this.gameOver) return;
 
-    // Kill enemy, player bounces up
+    // Enemy hit = DEATH
+    const ex = enemy.x, ey = enemy.y;
     enemy.destroy();
-    player.body.setVelocityY(PS.BOUNCE * 0.7);
 
-    // Explosion particles
-    for (let i = 0; i < 6; i++) {
-      this.landParticles.emitParticleAt(enemy.x, enemy.y);
+    // Big explosion
+    for (let i = 0; i < 15; i++) {
+      this.landParticles.emitParticleAt(ex, ey);
     }
-    this.cameras.main.shake(120, 0.008);
+    this.cameras.main.shake(200, 0.015);
+
+    // Death
+    this.endGame();
   }
 
   // ── GAME OVER ──────────────────────────────────────────────────────────
@@ -407,23 +422,44 @@ class BootScene extends Phaser.Scene {
     this.player.body.setAllowGravity(false);
     this.tweenPlayerDeath();
 
+    // Save high score
+    const prev = parseInt(localStorage.getItem('dos_highscore') || '0');
+    if (this.score > prev) localStorage.setItem('dos_highscore', '' + this.score);
+
     const W = GW, H = GH;
     const scrollY = this.cameras.main.scrollY;
 
     this.add.rectangle(W/2, H/2 - scrollY, W, H, 0x000000, 0.75).setDepth(200);
-    this.add.text(W/2, H/2 - 70 - scrollY, 'SYSTEM FAILURE', {
+    this.add.text(W/2, H/2 - 85 - scrollY, 'SYSTEM FAILURE', {
       fontSize:'30px', fontFamily:'Courier New, monospace', fontStyle:'bold', color:'#ff0044',
       stroke:'#000', strokeThickness:3
     }).setOrigin(0.5).setDepth(201);
-    this.add.text(W/2, H/2 - 20 - scrollY, 'HEIGHT: ' + this.score + 'm', {
+    this.add.text(W/2, H/2 - 35 - scrollY, 'HEIGHT: ' + this.score + 'm', {
       fontSize:'20px', fontFamily:'Courier New, monospace', fontStyle:'bold', color:'#00ff41'
     }).setOrigin(0.5).setDepth(201);
-    this.add.text(W/2, H/2 + 40 - scrollY, '>  RESTART  <', {
-      fontSize:'18px', fontFamily:'Courier New, monospace', fontStyle:'bold', color:'#00ff41'
-    }).setOrigin(0.5).setDepth(201).setInteractive({ useHandCursor: true }).on('pointerdown', () => location.reload());
+    this.add.text(W/2, H/2 - 5 - scrollY, 'BEST: ' + (localStorage.getItem('dos_highscore') || '0') + 'm', {
+      fontSize:'13px', fontFamily:'Courier New, monospace', color:'#666'
+    }).setOrigin(0.5).setDepth(201);
 
-    this.input.keyboard.once('keydown-SPACE', () => location.reload());
-    this.input.keyboard.once('keydown-ENTER', () => location.reload());
+    // RESTART button
+    const restartBtn = this.add.text(W/2 - 80, H/2 + 40 - scrollY, '>  RESTART  <', {
+      fontSize:'15px', fontFamily:'Courier New, monospace', fontStyle:'bold', color:'#00ff41'
+    }).setOrigin(0.5).setDepth(201).setInteractive({ useHandCursor: true });
+    restartBtn.on('pointerdown', () => { location.href = location.pathname + '?restart=1'; });
+    restartBtn.on('pointerover', () => restartBtn.setColor('#ffffff'));
+    restartBtn.on('pointerout', () => restartBtn.setColor('#00ff41'));
+
+    // HOME button
+    const homeBtn = this.add.text(W/2 + 80, H/2 + 40 - scrollY, '[ HOME ]', {
+      fontSize:'15px', fontFamily:'Courier New, monospace', fontStyle:'bold', color:'#555'
+    }).setOrigin(0.5).setDepth(201).setInteractive({ useHandCursor: true });
+    homeBtn.on('pointerdown', () => { location.reload(); });
+    homeBtn.on('pointerover', () => homeBtn.setColor('#00ff41'));
+    homeBtn.on('pointerout', () => homeBtn.setColor('#555'));
+
+    this.input.keyboard.once('keydown-SPACE', () => { location.href = location.pathname + '?restart=1'; });
+    this.input.keyboard.once('keydown-ENTER', () => { location.href = location.pathname + '?restart=1'; });
+    this.input.keyboard.once('keydown-ESC', () => { location.reload(); });
   }
 
   tweenPlayerDeath() {
@@ -531,8 +567,7 @@ class BootScene extends Phaser.Scene {
     const sy = 1 - this.player.squashTween * 1.2;
     this.player.setScale(sx, sy);
 
-    // Tilt based on velocity
-    this.player.rotation = Phaser.Math.Clamp(body.velocity.x * 0.003, -0.3, 0.3);
+    // No rotation — overlay always faces forward
 
     // ── PLAYER ANIMATION (cape + aura overlay) ──
     this.playerOverlay.clear();
