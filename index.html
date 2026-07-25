@@ -418,32 +418,31 @@ class BootScene extends Phaser.Scene {
     if (this.score > prev) localStorage.setItem('dos_highscore', '' + this.score);
 
     const W = GW, H = GH;
-    const scrollY = this.cameras.main.scrollY;
 
     // Hide player
     this.player.setVisible(false);
 
-    // Overlay
-    const gfx = this.add.graphics().setDepth(200);
-    gfx.fillStyle(0x000000, 0.75);
-    gfx.fillRect(0, -scrollY, W, H);
+    // Overlay (screen-fixed coordinates)
+    const gfx = this.add.graphics().setDepth(200).setScrollFactor(0);
+    gfx.fillStyle(0x000000, 0.8);
+    gfx.fillRect(0, 0, W, H);
 
-    this.add.text(W/2, H/2 - 85 - scrollY, 'SYSTEM FAILURE', {
-      fontSize:'30px', fontFamily:'Courier New',color:'#ff0044'
-    }).setOrigin(0.5).setDepth(201);
+    this.add.text(W/2, H/2 - 80, 'SYSTEM FAILURE', {
+      fontSize:'28px', fontFamily:'Courier New',color:'#ff0044'
+    }).setOrigin(0.5).setDepth(201).setScrollFactor(0);
 
-    this.add.text(W/2, H/2 - 35 - scrollY, 'HEIGHT: '+this.score+'m', {
-      fontSize:'20px', fontFamily:'Courier New',color:'#00ff41'
-    }).setOrigin(0.5).setDepth(201);
-
-    this.add.text(W/2, H/2 + 40 - scrollY, '> RESTART <', {
+    this.add.text(W/2, H/2 - 35, 'HEIGHT: '+this.score+'m', {
       fontSize:'18px', fontFamily:'Courier New',color:'#00ff41'
-    }).setOrigin(0.5).setDepth(201).setInteractive().on('pointerdown',
+    }).setOrigin(0.5).setDepth(201).setScrollFactor(0);
+
+    this.add.text(W/2, H/2 + 35, '> RESTART <', {
+      fontSize:'16px', fontFamily:'Courier New',color:'#00ff41'
+    }).setOrigin(0.5).setDepth(201).setScrollFactor(0).setInteractive().on('pointerdown',
       ()=>location.href=location.pathname+'?restart=1');
 
-    this.add.text(W/2, H/2 + 70 - scrollY, '[ HOME ]', {
-      fontSize:'14px', fontFamily:'Courier New',color:'#555'
-    }).setOrigin(0.5).setDepth(201).setInteractive().on('pointerdown',
+    this.add.text(W/2, H/2 + 65, '[ HOME ]', {
+      fontSize:'13px', fontFamily:'Courier New',color:'#555'
+    }).setOrigin(0.5).setDepth(201).setScrollFactor(0).setInteractive().on('pointerdown',
       ()=>location.reload());
   }
 
