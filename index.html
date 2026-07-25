@@ -57,52 +57,57 @@ class MenuScene extends Phaser.Scene {
       });
     }
 
-    // ── Capa 4: Título glitch ──
-    this.titleText = this.add.text(W / 2, H * 0.28, 'D.O.S', {
+    // ── Capa 4: Título ──
+    const titleY = H * 0.18;
+
+    // Main title text (black fill + green stroke = neon hollow effect)
+    this.titleText = this.add.text(W / 2, titleY, 'D.O.S', {
       fontSize: Math.min(110, Math.floor(W * 0.14)) + 'px',
       fontFamily: 'Courier New, monospace',
       fontStyle: 'bold',
-      color: '#e0ffe0',
+      color: '#000000',
       stroke: '#00ff41',
-      strokeThickness: 3
+      strokeThickness: 4
     }).setOrigin(0.5).setAlpha(0);
 
-    // Neon glow behind title (multiple text layers)
-    this.titleGlow1 = this.add.text(W / 2, H * 0.28, 'D.O.S', {
+    // Neon glow behind (wider, softer)
+    this.titleGlow1 = this.add.text(W / 2, titleY, 'D.O.S', {
       fontSize: Math.min(110, Math.floor(W * 0.14)) + 'px',
+      fontFamily: 'Courier New, monospace',
+      fontStyle: 'bold',
+      color: '#00ff41',
+      stroke: '#00ff41',
+      strokeThickness: 12
+    }).setOrigin(0.5).setAlpha(0.25);
+
+    this.titleGlow2 = this.add.text(W / 2, titleY, 'D.O.S', {
+      fontSize: Math.min(110, Math.floor(W * 0.14)) + 'px',
+      fontFamily: 'Courier New, monospace',
+      fontStyle: 'bold',
+      color: '#00ff41',
+      stroke: '#00ff41',
+      strokeThickness: 30
+    }).setOrigin(0.5).setAlpha(0.1);
+
+    // ── Subtitle (brillante) ──
+    this.subtitle = this.add.text(W / 2, titleY + Math.min(60, Math.floor(W * 0.08)), 'DAVID OPERATION SYSTEM', {
+      fontSize: Math.min(18, Math.floor(W * 0.028)) + 'px',
+      fontFamily: 'Courier New, monospace',
+      fontStyle: 'bold',
+      color: '#ffffff',
+      stroke: '#00ff41',
+      strokeThickness: 2
+    }).setOrigin(0.5).setAlpha(0);
+
+    // Subtitle glow
+    this.subGlow = this.add.text(W / 2, titleY + Math.min(60, Math.floor(W * 0.08)), 'DAVID OPERATION SYSTEM', {
+      fontSize: Math.min(18, Math.floor(W * 0.028)) + 'px',
       fontFamily: 'Courier New, monospace',
       fontStyle: 'bold',
       color: '#00ff41',
       stroke: '#00ff41',
       strokeThickness: 10
-    }).setOrigin(0.5).setAlpha(0.2);
-
-    this.titleGlow2 = this.add.text(W / 2, H * 0.28, 'D.O.S', {
-      fontSize: Math.min(110, Math.floor(W * 0.14)) + 'px',
-      fontFamily: 'Courier New, monospace',
-      fontStyle: 'bold',
-      color: '#00ff41',
-      stroke: '#00ff41',
-      strokeThickness: 25
-    }).setOrigin(0.5).setAlpha(0.08);
-
-    // Title accent - smaller glow underneath
-    this.titleGlow3 = this.add.text(W / 2, H * 0.28, 'D.O.S', {
-      fontSize: Math.min(110, Math.floor(W * 0.14)) + 'px',
-      fontFamily: 'Courier New, monospace',
-      fontStyle: 'bold',
-      color: '#ffffff',
-      stroke: '#ffffff',
-      strokeThickness: 2
-    }).setOrigin(0.5).setAlpha(0);
-
-    // ── Subtitle ──
-    this.subtitle = this.add.text(W / 2, H * 0.28 + Math.min(60, Math.floor(W * 0.08)), 'DAVID OPERATION SYSTEM', {
-      fontSize: Math.min(18, Math.floor(W * 0.028)) + 'px',
-      fontFamily: 'Courier New, monospace',
-      color: '#888',
-      letterSpacing: 8
-    }).setOrigin(0.5).setAlpha(0);
+    }).setOrigin(0.5).setAlpha(0.15);
 
     // ── Tagline ──
     this.tagline = this.add.text(W / 2, H * 0.28 + Math.min(85, Math.floor(W * 0.11)), '/// HACK THE SYSTEM ///', {
@@ -315,7 +320,7 @@ class MenuScene extends Phaser.Scene {
 
     if (this.entryProgress > 1.0 && !this.titleShown) {
       this.titleShown = true;
-      this.tweens.add({ targets: [this.titleText, this.titleGlow1, this.titleGlow2, this.titleGlow3], alpha: { from: 0, to: 1 }, duration: 800, ease: 'Power2' });
+      this.tweens.add({ targets: [this.titleText, this.titleGlow1, this.titleGlow2], alpha: { from: 0, to: 1 }, duration: 800, ease: 'Power2' });
       const originalTitle = this.titleText.text;
       // Glitch entrance
       this.time.addEvent({
@@ -329,7 +334,7 @@ class MenuScene extends Phaser.Scene {
 
     if (this.entryProgress > 2.0 && !this.subShown) {
       this.subShown = true;
-      this.tweens.add({ targets: this.subtitle, alpha: 1, duration: 600, ease: 'Power2' });
+      this.tweens.add({ targets: [this.subtitle, this.subGlow], alpha: 1, duration: 600, ease: 'Power2' });
     }
 
     if (this.entryProgress > 3.0 && !this.tagShown) {
