@@ -327,6 +327,21 @@ class BootScene extends Phaser.Scene {
     this.speedLineGfx = this.add.graphics().setDepth(5);
     this.platformGlowGfx = this.add.graphics().setDepth(3);
 
+    // Starfield
+    this.starGfx = this.add.graphics().setDepth(-2);
+    this.stars = [];
+    for (let i = 0; i < 120; i++) {
+      this.stars.push({
+        x: Phaser.Math.Between(0, GW),
+        y: Phaser.Math.Between(-PS.WORLD_LIMIT, GH),
+        size: Phaser.Math.FloatBetween(0.3, 1.5),
+        alpha: Phaser.Math.FloatBetween(0.1, 0.6),
+        twinkleSpeed: Phaser.Math.FloatBetween(0.5, 2),
+        twinkleOffset: Math.random() * Math.PI * 2,
+        parallax: Phaser.Math.FloatBetween(0.02, 0.08) // scrolls slower than camera
+      });
+    }
+
     // Collision
     this.physics.add.collider(this.player, this.platformGroup, this.onLand, (player, platform) => {
       return player.body.velocity.y >= 0 && (player.body.y + player.body.height) <= (platform.body.y + 12);
@@ -727,8 +742,21 @@ class BootScene extends Phaser.Scene {
       e.body.updateFromGameObject();
     }
 
-    // ── BACKGROUND GRID (parallax) ──
+    // ── STARFIELD ──
     const camY = this.cameras.main.scrollY;
+    this.starGfx.clear();
+    const twinkle = this.animTime;
+    for (const s of this.stars) {
+      const sy = s.y + camY * s.parallax;
+      const relY = sy - camY;
+      if (relY > -10 && relY < H + 10) {
+        const a = s.alpha * (0.5 + 0.5 * Math.sin(twinkle * s.twinkleSpeed + s.twinkleOffset));
+        this.starGfx.fillStyle(0x00ff41, a * 0.8);
+        this.starGfx.fillRect(s.x, sy, s.size, s.size);
+      }
+    }
+
+    // ── BACKGROUND GRID (parallax) ──
     this.bgGfx.clear();
     this.bgGfx.lineStyle(0.5, 0x003300, 0.12);
     for (let x = 0; x < W; x += sp) { this.bgGfx.beginPath(); this.bgGfx.moveTo(x,camY); this.bgGfx.lineTo(x,camY+H); this.bgGfx.strokePath(); }
