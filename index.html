@@ -144,7 +144,7 @@ class BootScene extends Phaser.Scene {
   setupGame() {
     const W = GAME_W, H = GAME_H;
     this.physics.world.setBounds(0, -WORLD_LIMIT, W, WORLD_LIMIT + H);
-    this.physics.world.gravity.y = 0;
+    // Don't set world gravity here — will be enabled on startGame()
 
     this.platformGroup = this.physics.add.staticGroup();
     this.platformGroup.visible = false;
@@ -159,6 +159,7 @@ class BootScene extends Phaser.Scene {
 
     this.cameras.main.startFollow(this.player, false, 0.1, 0.1);
     this.cameras.main.setBounds(0, -WORLD_LIMIT, W, WORLD_LIMIT + H);
+    this.cameras.main.stopFollow(); // Don't follow until game starts
 
     this.bgGfx = this.add.graphics().setDepth(-1);
     this.landParticles = this.add.particles(0, 0, 'particle', {
@@ -227,7 +228,13 @@ class BootScene extends Phaser.Scene {
     this.gameOver = false;
     this.score = 0;
     this.moveDir = 0;
+    this.highestY = Infinity;
     const W = GAME_W, H = GAME_H;
+
+    // Debug: big visible text
+    this.add.text(W/2, 200, 'GAME ACTIVE', {
+      fontSize: '32px', fontFamily: 'Courier New', fontStyle: 'bold', color: '#ff0044'
+    }).setOrigin(0.5).setDepth(200);
 
     // Show game elements
     this.player.visible = true;
@@ -306,11 +313,11 @@ class BootScene extends Phaser.Scene {
     this.add.text(W/2, H/2 + 60 - this.cameras.main.scrollY, '>  RESTART  <', {
       fontSize: '16px', fontFamily: 'Courier New, monospace', fontStyle: 'bold', color: '#00ff41'
     }).setOrigin(0.5).setDepth(201).setInteractive({ useHandCursor: true }).on('pointerdown', () => {
-      this.scene.restart();
+      location.reload();
     });
 
-    this.input.keyboard.once('keydown-SPACE', () => this.scene.restart());
-    this.input.keyboard.once('keydown-ENTER', () => this.scene.restart());
+    this.input.keyboard.once('keydown-SPACE', () => location.reload());
+    this.input.keyboard.once('keydown-ENTER', () => location.reload());
   }
 
   update(time, delta) {
@@ -410,10 +417,10 @@ class BootScene extends Phaser.Scene {
 
 // ─── PHASER CONFIG ─────────────────────────────────────────────────────────
 const config = {
-  type: Phaser.AUTO,
+  type: Phaser.CANVAS, // Force Canvas to avoid WebGL issues
   parent: 'game-container',
   width: GAME_W, height: GAME_H,
-  backgroundColor: '#05050a',
+  backgroundColor: '#0a0a14',
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
   physics: { default: 'arcade', arcade: { gravity: { y: GRAVITY }, debug: false } },
   scene: [BootScene]
