@@ -411,8 +411,8 @@ class BootScene extends Phaser.Scene {
     }
     this.cameras.main.shake(200, 0.015);
 
-    // Death
-    this.endGame();
+    // Defer endGame to avoid physics callback conflicts
+    this.time.delayedCall(50, () => this.endGame());
   }
 
   // ── GAME OVER ──────────────────────────────────────────────────────────
@@ -540,10 +540,18 @@ class BootScene extends Phaser.Scene {
       this.score = Math.floor(-this.highestY / 10);
       document.getElementById('hudHeight').textContent = 'HEIGHT: ' + this.score + 'm';
 
-      // Spawn enemies at height intervals
-      if (this.score > 200 && this.score % 50 < 3 && Math.random() < 0.02) {
+      // Spawn enemies with progressive difficulty
+      const spawnChance = Math.min(0.35, 0.02 + this.score * 0.00008);
+      const spawnInterval = Math.max(10, 50 - Math.floor(this.score / 20));
+      if (this.score > 150 && this.score % spawnInterval < 3 && Math.random() < spawnChance) {
         const types = ['firewall', 'virus', 'bot'];
-        this.spawnEnemy(this.player.y - GH, types[Math.floor(Math.random()*3)]);
+        // More enemy types at higher scores
+        const available = this.score > 500 ? types : this.score > 300 ? types.slice(0,2) : types.slice(0,1);
+        // Sometimes spawn 2 enemies at high scores
+        const count = (this.score > 800 && Math.random() < 0.3) ? 2 : 1;
+        for (let i = 0; i < count; i++) {
+          this.spawnEnemy(this.player.y - GH * (0.5 + Math.random() * 0.5), Phaser.Math.RND.pick(available));
+        }
       }
 
       for (const layer of LAYERS) {
