@@ -186,15 +186,6 @@ class BootScene extends Phaser.Scene {
     plg.fillStyle(0xff0044,0.05); plg.fillRect(0,1,88,4);
     plg.lineStyle(1,0xff0044,0.2); plg.strokeRect(0,0,88,5);
     plg.generateTexture('platform',88,5); plg.destroy();
-    // Load premium platform via Image()
-    this.platImg = new Image();
-    this.platImg.onload = () => {
-      try {
-        if (this.textures.exists('platform_premium')) this.textures.remove('platform_premium');
-        this.textures.addImage('platform_premium', this.platImg);
-      } catch(ex) {}
-    };
-    this.platImg.src = 'data:image/png;base64,' + TEX_PLATFORM;
 
     // Particle
     const ptg = this.make.graphics({ add: false });
@@ -572,12 +563,6 @@ class BootScene extends Phaser.Scene {
     if (this.gameOver) {
       if (!this.endingShown) this.showGameOver();
       return;
-    }
-    // Swap platforms to premium texture once loaded
-    if (this._platReady === undefined) { this._platReady = false; }
-    if (!this._platReady && this.textures && this.textures.exists('platform_premium')) {
-      this._platReady = true;
-      this.platformGroup.children.each(p => { if (p.active) p.setTexture('platform_premium'); });
     }
 
     // ── GAME LOGIC ──
