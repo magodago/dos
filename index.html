@@ -144,7 +144,7 @@ class BootScene extends Phaser.Scene {
         this.textures.addImage('player_premium', this.premiumImg);
         if (this.player && this.player.active) {
           this.player.setTexture('player_premium');
-          this.player.setScale(0.35);
+          this.player.setScale(0.175);
           this.player.setAlpha(1);
           this.player.visible = true;
         }
@@ -175,20 +175,28 @@ class BootScene extends Phaser.Scene {
       img.src = 'data:image/png;base64,' + b64s[i];
       this.enemyImgs[t] = img;
     });
-    // Platform — THIN, RED, GLOWING (5px)
+    // Platform — METALLIC with red neon (12px)
     const plg = this.make.graphics({ add: false });
-    plg.fillStyle(0x1a0505,1); plg.fillRect(0,0,88,5);
-    plg.fillStyle(0xff0044,0.3); plg.fillRect(0,0,88,2);
-    plg.fillStyle(0xff0044,0.9); plg.fillRect(0,0,88,1);
-    plg.fillStyle(0xff0044,1); plg.fillCircle(8,4,1);
-    plg.fillStyle(0xffaa00,0.8); plg.fillCircle(22,4,1);
-    plg.fillStyle(0xff0044,1); plg.fillCircle(36,4,1);
-    plg.fillStyle(0xffaa00,0.8); plg.fillCircle(50,4,1);
-    plg.fillStyle(0xff0044,1); plg.fillCircle(64,4,1);
-    plg.fillStyle(0xff0044,1); plg.fillCircle(78,4,1);
-    plg.fillStyle(0xff0044,0.05); plg.fillRect(0,1,88,4);
-    plg.lineStyle(1,0xff0044,0.2); plg.strokeRect(0,0,88,5);
-    plg.generateTexture('platform',88,5); plg.destroy();
+    // Dark metallic base
+    plg.fillStyle(0x2a2a2a,1); plg.fillRect(0,0,88,12);
+    plg.fillStyle(0x3a3a3a,1); plg.fillRect(0,0,88,3);
+    plg.fillStyle(0x222222,1); plg.fillRect(0,3,88,9);
+    // Top red neon strip
+    plg.fillStyle(0xff0044,0.8); plg.fillRect(0,0,88,2);
+    plg.fillStyle(0xff2266,0.4); plg.fillRect(0,2,88,1);
+    // Bottom neon edge
+    plg.fillStyle(0xff0044,0.3); plg.fillRect(0,10,88,2);
+    // LED indicators
+    plg.fillStyle(0xff0044,1); plg.fillCircle(8,9,2);
+    plg.fillStyle(0xffaa00,0.9); plg.fillCircle(22,9,2);
+    plg.fillStyle(0xff0044,1); plg.fillCircle(36,9,2);
+    plg.fillStyle(0xffaa00,0.9); plg.fillCircle(50,9,2);
+    plg.fillStyle(0xff0044,1); plg.fillCircle(64,9,2);
+    plg.fillStyle(0xff0044,1); plg.fillCircle(78,9,2);
+    // Subtle glow under
+    plg.fillStyle(0xff0044,0.06); plg.fillRect(0,3,88,7);
+    plg.lineStyle(1,0xff0044,0.4); plg.strokeRect(0,0,88,12);
+    plg.generateTexture('platform',88,12); plg.destroy();
 
     // Particle
     const ptg = this.make.graphics({ add: false });
@@ -294,7 +302,7 @@ class BootScene extends Phaser.Scene {
     this.player.setDepth(10);
     this.player.visible = true;
     this.player.setAlpha(1);
-    this.player.setScale(0.35);
+    this.player.setScale(0.175);
     this.player.squashTween = 1;
     this.player.landedTime = 0;
 
@@ -597,13 +605,21 @@ class BootScene extends Phaser.Scene {
     // Remove far platforms
     this.platformGroup.children.each((p) => { if (p.y > this.player.y + H + 200) p.destroy(); });
 
-    // ── PLATFORM GLOW (breathing neon) ──
+    // ── PLATFORM LIGHT BEAM (breathing red haze) ──
     this.platformGlowGfx.clear();
-    const breathe = 0.04 + 0.03 * Math.sin(this.animTime * 2);
+    const beam = 0.06 + 0.04 * Math.sin(this.animTime * 2);
+    const beamWide = 0.03 + 0.02 * Math.sin(this.animTime * 2.5);
     this.platformGroup.children.each(p => {
       if (!p.active) return;
-      this.platformGlowGfx.fillStyle(0xff0044, breathe);
-      this.platformGlowGfx.fillRect(p.x - 44, p.y - 4, 88, 8);
+      // Wide faint glow
+      this.platformGlowGfx.fillStyle(0xff0044, beamWide * 0.5);
+      this.platformGlowGfx.fillRect(p.x - 50, p.y - 30, 100, 40);
+      // Core beam
+      this.platformGlowGfx.fillStyle(0xff0044, beam);
+      this.platformGlowGfx.fillRect(p.x - 30, p.y - 20, 60, 30);
+      // Intense top
+      this.platformGlowGfx.fillStyle(0xff2266, beam * 0.7);
+      this.platformGlowGfx.fillRect(p.x - 10, p.y - 25, 20, 10);
     });
 
     // Game over
