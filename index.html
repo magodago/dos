@@ -73,7 +73,23 @@ class BootScene extends Phaser.Scene {
   constructor() { super('BootScene'); }
 
   preload(){
-    this.load.image('player', 'assets/player.png?v=2');
+    this.load.image('player', 'assets/player.png');
+    this.load.on('complete', () => {
+      if (!this.textures.exists('player')) {
+        // Fallback: generate texture from Graphics
+        const g = this.make.graphics({ add: false });
+        g.fillStyle(0x00ff41, 1);
+        g.fillCircle(16, 16, 14);
+        g.fillStyle(0xffffff, 0.8);
+        g.fillCircle(12, 12, 4);
+        g.fillCircle(20, 12, 4);
+        g.fillStyle(0xff0044, 0.6);
+        g.fillRect(10, 22, 12, 2);
+        g.generateTexture('player', 32, 32);
+        g.destroy();
+        console.warn('Player texture not loaded, using fallback');
+      }
+    });
   }
 
   create() {
@@ -225,7 +241,6 @@ class BootScene extends Phaser.Scene {
     this.player.setDepth(10);
     this.player.visible = true;
     this.player.setAlpha(1);
-    this.player.setTint(0xff00ff); // TEMP: purple tint to verify sprite loads
     this.player.setScale(2.5);
     this.player.squashTween = 1;
     this.player.landedTime = 0;
