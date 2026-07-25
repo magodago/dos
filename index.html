@@ -404,27 +404,32 @@ class BootScene extends Phaser.Scene {
 
   onEnemyHit(player, enemy) {
     if (this.gameOver) return;
-
-    // Enemy hit = DEATH
+    this.gameOver = true;
+    this.player.body.setVelocity(0, -200);
+    this.player.body.setAllowGravity(true);
+    this.player.setTint(0xff0044);
     const ex = enemy.x, ey = enemy.y;
-    enemy.destroy();
-
-    // Big explosion
-    for (let i = 0; i < 15; i++) {
-      this.landParticles.emitParticleAt(ex, ey);
-    }
-    this.cameras.main.shake(200, 0.015);
-
-    // Defer endGame to avoid physics callback conflicts
-    this.time.delayedCall(50, () => this.endGame());
+    this.time.delayedCall(50, () => {
+      this.endGame(ex, ey);
+    });
   }
 
   // ── GAME OVER ──────────────────────────────────────────────────────────
-  endGame() {
+  endGame(enemyX, enemyY) {
+    if (this.mode !== 'game') return;
     this.gameOver = true;
     this.player.body.setVelocity(0, 0);
     this.player.body.setAllowGravity(false);
     this.tweenPlayerDeath();
+
+    // Shake + particles on enemy death
+    if (enemyX != null) {
+      for (let i = 0; i < 20; i++) this.landParticles.emitParticleAt(enemyX, enemyY);
+      this.cameras.main.shake(250, 0.015);
+    }
+    // Destroy all enemies safely
+    for (const e of this.enemies) { if (e && e.active) e.destroy(); }
+    this.enemies = [];
 
     // Save high score
     const prev = parseInt(localStorage.getItem('dos_highscore') || '0');
