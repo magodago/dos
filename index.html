@@ -107,38 +107,33 @@ class BootScene extends Phaser.Scene {
 
   // ── TEXTURES ──────────────────────────────────────────────────────────
   setupTextures() {
-    // Player sprite (trench coat character) — HIGH VISIBILITY version
+    // Player sprite — HIGH CONTRAST (body bright green, no dark colors)
     const pg = this.make.graphics({ add: false });
-    // Bright glow aura
-    pg.fillStyle(0x00ff41, 0.4);
-    pg.fillCircle(24, 24, 24);
-    pg.fillStyle(0x00ff41, 0.2);
-    pg.fillCircle(24, 24, 28);
-    // Body (trench coat) — lighter color so it contrasts
-    pg.fillStyle(0x1a2a1a, 1);
-    pg.fillRect(12, 18, 24, 26);
-    pg.fillStyle(0x162616, 1);
-    pg.fillRect(14, 14, 20, 10);
-    // Coat neon trim
-    pg.lineStyle(2, 0x00ff41, 0.9);
-    pg.strokeRect(12, 18, 24, 26);
-    pg.lineStyle(1.5, 0x00ff41, 0.6);
-    pg.beginPath(); pg.moveTo(12, 18); pg.lineTo(6, 44); pg.strokePath();
-    pg.beginPath(); pg.moveTo(36, 18); pg.lineTo(42, 44); pg.strokePath();
-    // Head — visible skin color
-    pg.fillStyle(0x4a3020, 1);
-    pg.fillCircle(24, 10, 8);
-    // Eyes — bright neon green with white center
+    // Body (bright green trench coat)
+    pg.fillStyle(0x00cc33, 1);
+    pg.fillRoundedRect(14, 22, 20, 22, 3);
     pg.fillStyle(0x00ff41, 1);
-    pg.fillCircle(20, 9, 3);
-    pg.fillCircle(28, 9, 3);
+    pg.fillRect(14, 18, 20, 8);
+    // Coat outline
+    pg.lineStyle(2, 0x66ffaa, 1);
+    pg.strokeRoundedRect(14, 22, 20, 22, 3);
+    // Coat tails
+    pg.lineStyle(2, 0x66ffaa, 1);
+    pg.beginPath(); pg.moveTo(14, 22); pg.lineTo(8, 44); pg.strokePath();
+    pg.beginPath(); pg.moveTo(34, 22); pg.lineTo(40, 44); pg.strokePath();
+    // Head
+    pg.fillStyle(0xcc9966, 1);
+    pg.fillCircle(24, 12, 9);
+    // Hair
+    pg.fillStyle(0x332211, 1);
+    pg.fillCircle(24, 9, 8);
+    // Eyes — bright
     pg.fillStyle(0xffffff, 1);
-    pg.fillCircle(20, 9, 1.5);
-    pg.fillCircle(28, 9, 1.5);
-    // Eye glow
-    pg.fillStyle(0x00ff41, 0.5);
-    pg.fillCircle(20, 9, 5);
-    pg.fillCircle(28, 9, 5);
+    pg.fillCircle(21, 13, 3);
+    pg.fillCircle(27, 13, 3);
+    pg.fillStyle(0x00ff41, 1);
+    pg.fillCircle(21, 13, 1.5);
+    pg.fillCircle(27, 13, 1.5);
     pg.generateTexture('player', 48, 48);
     pg.destroy();
 
