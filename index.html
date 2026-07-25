@@ -72,25 +72,7 @@ const LAYERS = [
 class BootScene extends Phaser.Scene {
   constructor() { super('BootScene'); }
 
-  preload(){
-    this.load.image('player', 'assets/player.png');
-    this.load.on('complete', () => {
-      if (!this.textures.exists('player')) {
-        // Fallback: generate texture from Graphics
-        const g = this.make.graphics({ add: false });
-        g.fillStyle(0x00ff41, 1);
-        g.fillCircle(16, 16, 14);
-        g.fillStyle(0xffffff, 0.8);
-        g.fillCircle(12, 12, 4);
-        g.fillCircle(20, 12, 4);
-        g.fillStyle(0xff0044, 0.6);
-        g.fillRect(10, 22, 12, 2);
-        g.generateTexture('player', 32, 32);
-        g.destroy();
-        console.warn('Player texture not loaded, using fallback');
-      }
-    });
-  }
+  preload(){} // All textures generated in create()
 
   create() {
     this.mode = 'menu';
@@ -125,6 +107,36 @@ class BootScene extends Phaser.Scene {
 
   // ── TEXTURES ──────────────────────────────────────────────────────────
   setupTextures() {
+    // Player sprite (trench coat character)
+    const pg = this.make.graphics({ add: false });
+    // Glow aura
+    pg.fillStyle(0x00ff41, 0.15);
+    pg.fillCircle(24, 24, 22);
+    // Body (trench coat)
+    pg.fillStyle(0x0a0a14, 1);
+    pg.fillRect(14, 14, 20, 30);
+    pg.fillStyle(0x1a1a2e, 1);
+    pg.fillRect(12, 12, 24, 8);
+    // Coat edges glow
+    pg.lineStyle(1, 0x00ff41, 0.5);
+    pg.strokeRect(14, 14, 20, 30);
+    pg.lineStyle(1, 0x00ff41, 0.2);
+    pg.beginPath(); pg.moveTo(14, 14); pg.lineTo(8, 44); pg.strokePath();
+    pg.beginPath(); pg.moveTo(34, 14); pg.lineTo(40, 44); pg.strokePath();
+    // Head
+    pg.fillStyle(0x2a1a0a, 1);
+    pg.fillCircle(24, 10, 7);
+    // Eyes (neon green)
+    pg.fillStyle(0x00ff41, 1);
+    pg.fillCircle(21, 9, 2);
+    pg.fillCircle(27, 9, 2);
+    // Eye glow
+    pg.fillStyle(0x00ff41, 0.3);
+    pg.fillCircle(21, 9, 4);
+    pg.fillCircle(27, 9, 4);
+    pg.generateTexture('player', 48, 48);
+    pg.destroy();
+
     // Platform
     const plg = this.make.graphics({ add: false });
     plg.fillStyle(0x0d1a0d,1); plg.fillRoundedRect(0,0,88,20,3);
@@ -234,7 +246,7 @@ class BootScene extends Phaser.Scene {
     this.platformGroup.visible = false;
 
     this.player = this.physics.add.sprite(W/2, 60, 'player');
-    this.player.body.setSize(48, 64);
+    this.player.body.setSize(28, 44, 10, 4);
     this.player.setCollideWorldBounds(false);
     this.player.setBounce(0);
     this.player.body.setAllowGravity(false);
