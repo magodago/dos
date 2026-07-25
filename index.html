@@ -117,26 +117,51 @@ class BootScene extends Phaser.Scene {
 
   // ── TEXTURES ──────────────────────────────────────────────────────────
   setupTextures() {
-    // Player sprite — fallback Graphics + premium ComfyUI via Image()
+    // Player sprite — fluffy orange plush ball (fallback)
     const pg = this.make.graphics({ add: false });
-    pg.fillStyle(0x00ff41, 1);
-    pg.fillRect(10, 20, 28, 24);
-    pg.fillStyle(0x33ff77, 1);
-    pg.fillRect(10, 18, 28, 6);
-    pg.fillStyle(0x00dd33, 1);
-    pg.fillRect(8, 16, 32, 6);
-    pg.fillStyle(0xffcc99, 1);
-    pg.fillRect(17, 4, 14, 14);
-    pg.fillStyle(0x332211, 1);
-    pg.fillRect(17, 4, 14, 6);
+    // Body — fluffy orange circle with jagged edges
+    pg.fillStyle(0xff6622, 1);
+    pg.fillCircle(24, 24, 22);
+    // Fur texture — multiple small overlapping circles
+    for (let ang = 0; ang < 360; ang += 30) {
+      const rad = ang * Math.PI / 180;
+      const fx = 24 + Math.cos(rad) * 20;
+      const fy = 24 + Math.sin(rad) * 20;
+      pg.fillStyle(0xff8833, 0.5);
+      pg.fillCircle(fx, fy, 6);
+    }
+    // Darker orange shading
+    pg.fillStyle(0xdd5511, 0.3);
+    pg.fillCircle(18, 28, 14);
+    // Wind-blown fur tufts on left side
+    pg.lineStyle(2, 0xff8833, 0.8);
+    for (let i = 0; i < 5; i++) {
+      const ang = -0.5 + i * 0.3;
+      const len = 8 + Math.random() * 6;
+      pg.beginPath(); pg.moveTo(6 + i*4, 18 + i*3);
+      pg.lineTo(6 + i*4 - len * Math.cos(ang), 18 + i*3 - len * Math.sin(ang));
+      pg.strokePath();
+    }
+    // Neon blue eyes
+    pg.fillStyle(0x00ddff, 1);
+    pg.fillCircle(17, 20, 4);
+    pg.fillCircle(31, 20, 4);
+    // Eye glow
+    pg.fillStyle(0x66ffff, 0.6);
+    pg.fillCircle(17, 20, 6);
+    pg.fillCircle(31, 20, 6);
+    // Pupils
     pg.fillStyle(0xffffff, 1);
-    pg.fillRect(19, 10, 3, 3);
-    pg.fillRect(26, 10, 3, 3);
-    pg.fillStyle(0x00ff41, 1);
-    pg.fillRect(20, 11, 1, 1);
-    pg.fillRect(27, 11, 1, 1);
-    pg.generateTexture('player', 48, 48);
-    pg.destroy();
+    pg.fillCircle(18, 19, 1.5);
+    pg.fillCircle(32, 19, 1.5);
+    // Cute mouth
+    pg.lineStyle(1, 0xdd4400, 0.8);
+    pg.beginPath(); pg.arc(24, 28, 4, 0.2, Math.PI - 0.2); pg.strokePath();
+    // Cheek blush
+    pg.fillStyle(0xff6644, 0.3);
+    pg.fillCircle(12, 27, 4);
+    pg.fillCircle(36, 27, 4);
+    pg.generateTexture('player', 48, 48); pg.destroy();
     // Load premium ComfyUI sprite via browser Image() (100% reliable)
     this.premiumImg = new Image();
     this.premiumImg.onload = () => {
