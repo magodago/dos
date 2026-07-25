@@ -175,28 +175,23 @@ class BootScene extends Phaser.Scene {
       img.src = 'data:image/png;base64,' + b64s[i];
       this.enemyImgs[t] = img;
     });
-    // Platform — METALLIC with red neon (12px)
+    // Platform — premium ComfyUI
     const plg = this.make.graphics({ add: false });
-    // Dark metallic base
     plg.fillStyle(0x2a2a2a,1); plg.fillRect(0,0,88,12);
-    plg.fillStyle(0x3a3a3a,1); plg.fillRect(0,0,88,3);
-    plg.fillStyle(0x222222,1); plg.fillRect(0,3,88,9);
-    // Top red neon strip
-    plg.fillStyle(0xff0044,0.8); plg.fillRect(0,0,88,2);
-    plg.fillStyle(0xff2266,0.4); plg.fillRect(0,2,88,1);
-    // Bottom neon edge
-    plg.fillStyle(0xff0044,0.3); plg.fillRect(0,10,88,2);
-    // LED indicators
-    plg.fillStyle(0xff0044,1); plg.fillCircle(8,9,2);
-    plg.fillStyle(0xffaa00,0.9); plg.fillCircle(22,9,2);
-    plg.fillStyle(0xff0044,1); plg.fillCircle(36,9,2);
-    plg.fillStyle(0xffaa00,0.9); plg.fillCircle(50,9,2);
-    plg.fillStyle(0xff0044,1); plg.fillCircle(64,9,2);
-    plg.fillStyle(0xff0044,1); plg.fillCircle(78,9,2);
-    // Subtle glow under
-    plg.fillStyle(0xff0044,0.06); plg.fillRect(0,3,88,7);
-    plg.lineStyle(1,0xff0044,0.4); plg.strokeRect(0,0,88,12);
+    plg.fillStyle(0xff0044,0.3); plg.fillRect(0,0,88,2);
     plg.generateTexture('platform',88,12); plg.destroy();
+    // Load premium platform via Image()
+    this.platImg = new Image();
+    this.platImg.onload = () => {
+      try {
+        if (this.textures.exists('platform_premium')) this.textures.remove('platform_premium');
+        this.textures.addImage('platform_premium', this.platImg);
+        if (this.platformGroup) {
+          this.platformGroup.children.each(p => { if (p.active) p.setTexture('platform_premium'); });
+        }
+      } catch(ex) {}
+    };
+    this.platImg.src = 'data:image/png;base64,' + TEX_PLATFORM;
 
     // Particle
     const ptg = this.make.graphics({ add: false });
@@ -402,13 +397,14 @@ class BootScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player, false, 0.08, 0.08);
 
     // First platform
-    this.platformGroup.create(W/2, 160, 'platform').refreshBody();
+    const platKey = (this.textures && this.textures.exists('platform_premium')) ? 'platform_premium' : 'platform';
+    this.platformGroup.create(W/2, 160, platKey).refreshBody();
 
     // Generate platforms upward
     let y = 140;
     for (let i = 0; i < 25; i++) {
       y -= PS.PLATFORM_SPACING;
-      this.platformGroup.create(Phaser.Math.Between(50, W-50), y, 'platform').refreshBody();
+      this.platformGroup.create(Phaser.Math.Between(50, W-50), y, platKey).refreshBody();
     }
     this.lastPlatformKey = y;
 
@@ -595,9 +591,10 @@ class BootScene extends Phaser.Scene {
     // Generate platforms
     if (this.player.y < this.lastPlatformKey + 1500) {
       let y = this.lastPlatformKey;
+      const platKey = (this.textures && this.textures.exists('platform_premium')) ? 'platform_premium' : 'platform';
       for (let i = 0; i < 10; i++) {
         y -= PS.PLATFORM_SPACING;
-        this.platformGroup.create(Phaser.Math.Between(50,W-50), y, 'platform').refreshBody();
+        this.platformGroup.create(Phaser.Math.Between(50,W-50), y, platKey).refreshBody();
       }
       this.lastPlatformKey = y;
     }
