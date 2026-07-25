@@ -304,28 +304,275 @@ class MenuBgScene extends Phaser.Scene {
   }
 }
 
-// ─── SCENE: GAME (placeholder) ─────────────────────────────────────────────
+// ─── SCENE: GAME ──────────────────────────────────────────────────────────
 class GameScene extends Phaser.Scene {
   constructor() { super('GameScene'); }
+
+  init() {
+    this.score = 0;
+    this.highestY = 0;
+    this.gameOver = false;
+    this.platformGroup = null;
+    this.lastPlatformY = 0;
+    this.platformSpacing = 80;
+    this.moveDir = 0; // -1 left, 0 none, 1 right
+  }
 
   create() {
     const W = this.cameras.main.width;
     const H = this.cameras.main.height;
+    const BOUNDS_H = 10000; // How high the world goes
+
     this.cameras.main.setBackgroundColor('#05050a');
+    this.physics.world.setBounds(0, -BOUNDS_H, W, BOUNDS_H + H);
 
-    this.add.text(W/2, H/2 - 30, 'GAME LOADING...', {
-      fontSize: '22px', fontFamily: 'Courier New, monospace', fontStyle: 'bold', color: '#00ff41'
-    }).setOrigin(0.5);
+    // ── Generate player texture ──
+    const playerGfx = this.make.graphics({ add: false });
+    // Outer glow
+    playerGfx.fillStyle(0x00ff41, 0.15);
+    playerGfx.fillCircle(24, 24, 24);
+    playerGfx.fillStyle(0x00ff41, 0.3);
+    playerGfx.fillCircle(24, 24, 18);
+    // Core
+    playerGfx.fillStyle(0x00ff41, 0.9);
+    playerGfx.fillCircle(24, 24, 12);
+    playerGfx.fillStyle(0xe0ffe0, 1);
+    playerGfx.fillCircle(24, 24, 6);
+    // Eyes
+    playerGfx.fillStyle(0x000000, 1);
+    playerGfx.fillCircle(19, 22, 2.5);
+    playerGfx.fillCircle(29, 22, 2.5);
+    playerGfx.fillStyle(0xffffff, 1);
+    playerGfx.fillCircle(19, 22, 1);
+    playerGfx.fillCircle(29, 22, 1);
+    playerGfx.generateTexture('player', 48, 48);
+    playerGfx.destroy();
 
-    this.add.text(W/2, H/2 + 20, 'Press SPACE to return', {
-      fontSize: '13px', fontFamily: 'Courier New, monospace', color: '#555'
-    }).setOrigin(0.5);
+    // ── Platform texture ──
+    const platGfx = this.make.graphics({ add: false });
+    platGfx.fillStyle(0x0a1a0a, 1);
+    platGfx.fillRoundedRect(0, 0, 80, 16, 3);
+    platGfx.lineStyle(1, 0x00ff41, 0.6);
+    platGfx.strokeRoundedRect(0, 0, 80, 16, 3);
+    // Inner glow line
+    platGfx.lineStyle(0.5, 0x00ff41, 0.2);
+    platGfx.beginPath();
+    platGfx.moveTo(2, 2);
+    platGfx.lineTo(78, 2);
+    platGfx.strokePath();
+    platGfx.generateTexture('platform', 80, 16);
+    platGfx.destroy();
 
+    // ── Player ──
+    this.player = this.physics.add.sprite(W / 2, H - 100, 'player');
+    this.player.body.setCircle(12, 12, 8);
+    this.player.setCollideWorldBounds(false);
+    this.player.setBounce(0);
+    this.player.body.setGravityY(0);
+    this.player.body.setGravity(0, 800);
+    this.player.setDepth(10);
+
+    // ── Platforms ──
+    this.platformGroup = this.physics.add.staticGroup();
+
+    // Generate initial set of platforms
+    this.lastPlatformY = H - 80;
+    this.generatePlatforms(H);
+
+    // ── Collision ──
+    this.physics.add.collider(this.player, this.platformGroup, this.onLand, null, this);
+
+    // ── Controls ──
+    this.cursors = this.input.keyboard.createCursorKeys();
+
+    // Touch controls
+    this.input.on('pointerdown', (pointer) => {
+      if (this.gameOver) return;
+      this.moveDir = pointer.x < W / 2 ? -1 : 1;
+    });
+    this.input.on('pointerup', () => {
+      this.moveDir = 0;
+    });
+
+    // ── Camera ──
+    this.cameras.main.startFollow(this.player, false, 0.1, 0.1);
+    this.cameras.main.setBounds(0, -BOUNDS_H, W, BOUNDS_H + H);
+
+    // ── Background grid (parallax) ──
+    this.bgGfx = this.add.graphics().setDepth(-1);
+    this.bgOffset = 0;
+
+    // ── Score HUD ──
+    this.scoreText = this.add.text(15, 15, 'HEIGHT: 0m', {
+      fontSize: '14px', fontFamily: 'Courier New, monospace',
+      fontStyle: 'bold', color: '#00ff41',
+      stroke: '#000', strokeThickness: 2
+    }).setScrollFactor(0).setDepth(100);
+
+    // ── Particles for landing ──
+    this.landParticles = this.add.particles(0, 0, 'player', {
+      speed: { min: 20, max: 60 },
+      angle: { min: 200, max: 340 },
+      scale: { start: 0.3, end: 0 },
+      lifespan: 400,
+      quantity: 6,
+      tint: 0x00ff41,
+      emitting: false
+    });
+    this.landParticles.setDepth(11);
+
+    // ── Layer indicator ──
+    this.layerText = this.add.text(W - 15, 15, 'SHELL', {
+      fontSize: '11px', fontFamily: 'Courier New, monospace',
+      color: '#444', stroke: '#000', strokeThickness: 2
+    }).setOrigin(1, 0).setScrollFactor(0).setDepth(100);
+
+    // ── Platform spawner ──
+    this.spawnTimer = 0;
+  }
+
+  generatePlatforms(cameraH) {
+    const W = this.cameras.main.width;
+    let y = this.lastPlatformKey || (this.cameras.main.height - 80);
+
+    // Generate platforms from current position upward
+    for (let i = 0; i < 20; i++) {
+      const x = Phaser.Math.Between(40, W - 40);
+      const plat = this.platformGroup.create(x, y, 'platform');
+      plat.refreshBody();
+      this.lastPlatformKey = y - this.platformSpacing;
+      y = this.lastPlatformKey;
+    }
+  }
+
+  onLand(player, platform) {
+    if (this.gameOver) return;
+
+    // Bounce player up
+    player.body.setVelocityY(-550);
+
+    // Landing particles
+    this.landParticles.emitParticleAt(player.x, player.y + 12);
+
+    // Score: track height
+    this.highestY = Math.min(this.highestY, player.y);
+    this.score = Math.floor(-this.highestY / 10);
+    this.scoreText.setText('HEIGHT: ' + this.score + 'm');
+
+    // Layer indicator
+    const layers = [
+      { max: 0, name: 'SHELL', color: '#444' },
+      { max: 5000, name: 'KERNEL', color: '#00d4ff' },
+      { max: 15000, name: 'FIREWALL', color: '#ff0044' },
+      { max: 30000, name: 'MAINFRAME', color: '#aa00ff' }
+    ];
+    for (const layer of layers) {
+      if (this.score >= layer.max) {
+        this.layerText.setText(layer.name);
+        this.layerText.setColor(layer.color);
+      }
+    }
+  }
+
+  update(time, delta) {
+    if (this.gameOver) return;
+
+    const W = this.cameras.main.width;
+    const H = this.cameras.main.height;
+    const body = this.player.body;
+
+    // ── Horizontal movement ──
+    let moveX = 0;
+    if (this.cursors.left.isDown) moveX = -1;
+    else if (this.cursors.right.isDown) moveX = 1;
+    else if (this.moveDir !== 0) moveX = this.moveDir;
+
+    body.setVelocityX(moveX * 200);
+
+    // Wrap around screen horizontally
+    if (this.player.x < -10) this.player.x = W + 10;
+    else if (this.player.x > W + 10) this.player.x = -10;
+
+    // ── Generate platforms ahead ──
+    const playerTop = this.player.y;
+    if (playerTop < this.lastPlatformKey + 2000) {
+      let y = this.lastPlatformKey;
+      for (let i = 0; i < 10; i++) {
+        const x = Phaser.Math.Between(40, W - 40);
+        const plat = this.platformGroup.create(x, y, 'platform');
+        plat.refreshBody();
+        y -= this.platformSpacing;
+      }
+      this.lastPlatformKey = y;
+    }
+
+    // ── Remove platforms far below ──
+    this.platformGroup.children.each((plat) => {
+      if (plat.y > this.player.y + H + 100) {
+        plat.destroy();
+      }
+    });
+
+    // ── Game over if fallen off screen ──
+    if (this.player.y > H + 100) {
+      this.endGame();
+    }
+
+    // ── Background grid ──
+    this.bgGfx.clear();
+    const sp = 40;
+    const camY = this.cameras.main.scrollY;
+    this.bgGfx.lineStyle(0.5, 0x003300, 0.15);
+    for (let x = 0; x < W; x += sp) {
+      this.bgGfx.beginPath(); this.bgGfx.moveTo(x, camY); this.bgGfx.lineTo(x, camY + H); this.bgGfx.strokePath();
+    }
+    for (let y = Math.floor(camY / sp) * sp; y < camY + H; y += sp) {
+      this.bgGfx.beginPath(); this.bgGfx.moveTo(0, y); this.bgGfx.lineTo(W, y); this.bgGfx.strokePath();
+    }
+
+    // ── Player tilt based on horizontal speed ──
+    this.player.rotation = Phaser.Math.Clamp(body.velocity.x * 0.003, -0.3, 0.3);
+
+    // ── Landing check particles ──
+    if (body.blocked.down) {
+      this.landParticles.emitting = false;
+    }
+  }
+
+  endGame() {
+    this.gameOver = true;
+    this.player.body.setVelocity(0, 0);
+    this.player.setTint(0xff0044);
+    this.player.body.setAllowGravity(false);
+
+    const W = this.cameras.main.width;
+    const H = this.cameras.main.height;
+
+    this.add.rectangle(W/2, H/2, W, H, 0x000000, 0.7).setScrollFactor(0).setDepth(200);
+
+    this.add.text(W/2, H/2 - 60, 'SYSTEM FAILURE', {
+      fontSize: '28px', fontFamily: 'Courier New, monospace',
+      fontStyle: 'bold', color: '#ff0044'
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(201);
+
+    this.add.text(W/2, H/2, 'HEIGHT: ' + this.score + 'm', {
+      fontSize: '18px', fontFamily: 'Courier New, monospace',
+      color: '#00ff41'
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(201);
+
+    const restartBtn = this.add.text(W/2, H/2 + 60, '>  RESTART  <', {
+      fontSize: '16px', fontFamily: 'Courier New, monospace',
+      fontStyle: 'bold', color: '#00ff41'
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(201).setInteractive({ useHandCursor: true });
+
+    restartBtn.on('pointerdown', () => {
+      this.scene.restart();
+    });
     this.input.keyboard.once('keydown-SPACE', () => {
-      this.cameras.main.fadeOut(500, 0, 0, 0);
-      this.cameras.main.once('camerafadeoutcomplete', () => {
-        location.reload();
-      });
+      this.scene.restart();
+    });
+    this.input.keyboard.once('keydown-ENTER', () => {
+      this.scene.restart();
     });
   }
 }
