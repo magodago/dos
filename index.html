@@ -364,7 +364,8 @@ class GameScene extends Phaser.Scene {
     platGfx.destroy();
 
     // ── Player ──
-    this.player = this.physics.add.sprite(W / 2, H - 100, 'player');
+    // Start near top of screen; first platform is below so player falls onto it
+    this.player = this.physics.add.sprite(W / 2, 60, 'player');
     this.player.body.setCircle(12, 12, 8);
     this.player.setCollideWorldBounds(false);
     this.player.setBounce(0);
@@ -375,9 +376,12 @@ class GameScene extends Phaser.Scene {
     // ── Platforms ──
     this.platformGroup = this.physics.add.staticGroup();
 
-    // Generate initial set of platforms
-    this.lastPlatformY = H - 80;
-    this.generatePlatforms(H);
+    // FIRST platform: directly below the player so they land on it
+    this.platformGroup.create(W / 2, 140, 'platform').refreshBody();
+
+    // Generate platforms upward from above the first one
+    this.lastPlatformKey = 120;
+    this.generateInitialPlatforms();
 
     // ── Collision ──
     this.physics.add.collider(this.player, this.platformGroup, this.onLand, null, this);
@@ -438,18 +442,18 @@ class GameScene extends Phaser.Scene {
     this.spawnTimer = 0;
   }
 
-  generatePlatforms(cameraH) {
+  generateInitialPlatforms() {
     const W = this.cameras.main.width;
-    let y = this.lastPlatformKey || (this.cameras.main.height - 80);
+    let y = this.lastPlatformKey;
 
-    // Generate platforms from current position upward
+    // Generate platforms upward from current position
     for (let i = 0; i < 20; i++) {
       const x = Phaser.Math.Between(40, W - 40);
+      y -= this.platformSpacing;
       const plat = this.platformGroup.create(x, y, 'platform');
       plat.refreshBody();
-      this.lastPlatformKey = y - this.platformSpacing;
-      y = this.lastPlatformKey;
     }
+    this.lastPlatformKey = y;
   }
 
   onLand(player, platform) {
@@ -506,9 +510,9 @@ class GameScene extends Phaser.Scene {
       let y = this.lastPlatformKey;
       for (let i = 0; i < 10; i++) {
         const x = Phaser.Math.Between(40, W - 40);
+        y -= this.platformSpacing;
         const plat = this.platformGroup.create(x, y, 'platform');
         plat.refreshBody();
-        y -= this.platformSpacing;
       }
       this.lastPlatformKey = y;
     }
