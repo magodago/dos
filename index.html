@@ -141,7 +141,7 @@ class BootScene extends Phaser.Scene {
         this.textures.addImage('player_premium', this.premiumImg);
         if (this.player && this.player.active) {
           this.player.setTexture('player_premium');
-          this.player.setScale(1.0);
+          this.player.setScale(0.5);
           this.player.setAlpha(1);
           this.player.visible = true;
         }
@@ -172,25 +172,20 @@ class BootScene extends Phaser.Scene {
       img.src = 'data:image/png;base64,' + b64s[i];
       this.enemyImgs[t] = img;
     });
-    // Platform — THIN, RED, GLOWING
+    // Platform — THIN, RED, GLOWING (5px)
     const plg = this.make.graphics({ add: false });
-    // Base dark red panel
-    plg.fillStyle(0x1a0505,1); plg.fillRect(0,0,88,10);
-    // Red glow top edge
-    plg.fillStyle(0xff0044,0.25); plg.fillRect(0,0,88,3);
-    // Bright neon line
+    plg.fillStyle(0x1a0505,1); plg.fillRect(0,0,88,5);
+    plg.fillStyle(0xff0044,0.3); plg.fillRect(0,0,88,2);
     plg.fillStyle(0xff0044,0.9); plg.fillRect(0,0,88,1);
-    plg.fillStyle(0xff2266,0.6); plg.fillRect(0,2,88,1);
-    // Small LED dots
-    plg.fillStyle(0xff0044,1); plg.fillCircle(10,7,1.5);
-    plg.fillStyle(0xffaa00,0.8); plg.fillCircle(25,7,1.5);
-    plg.fillStyle(0xff0044,1); plg.fillCircle(40,7,1.5);
-    plg.fillStyle(0xffaa00,0.8); plg.fillCircle(55,7,1.5);
-    plg.fillStyle(0xff0044,1); plg.fillCircle(70,7,1.5);
-    // Glow under
-    plg.fillStyle(0xff0044,0.08); plg.fillRect(0,3,88,7);
-    plg.lineStyle(1,0xff0044,0.3); plg.strokeRect(0,0,88,10);
-    plg.generateTexture('platform',88,10); plg.destroy();
+    plg.fillStyle(0xff0044,1); plg.fillCircle(8,4,1);
+    plg.fillStyle(0xffaa00,0.8); plg.fillCircle(22,4,1);
+    plg.fillStyle(0xff0044,1); plg.fillCircle(36,4,1);
+    plg.fillStyle(0xffaa00,0.8); plg.fillCircle(50,4,1);
+    plg.fillStyle(0xff0044,1); plg.fillCircle(64,4,1);
+    plg.fillStyle(0xff0044,1); plg.fillCircle(78,4,1);
+    plg.fillStyle(0xff0044,0.05); plg.fillRect(0,1,88,4);
+    plg.lineStyle(1,0xff0044,0.2); plg.strokeRect(0,0,88,5);
+    plg.generateTexture('platform',88,5); plg.destroy();
     // Load premium platform via Image()
     this.platImg = new Image();
     this.platImg.onload = () => {
@@ -305,7 +300,7 @@ class BootScene extends Phaser.Scene {
     this.player.setDepth(10);
     this.player.visible = true;
     this.player.setAlpha(1);
-    this.player.setScale(1.0);
+    this.player.setScale(0.5);
     this.player.squashTween = 1;
     this.player.landedTime = 0;
 
