@@ -172,17 +172,25 @@ class BootScene extends Phaser.Scene {
       img.src = 'data:image/png;base64,' + b64s[i];
       this.enemyImgs[t] = img;
     });
-    // Platform
+    // Platform — THIN, RED, GLOWING
     const plg = this.make.graphics({ add: false });
-    plg.fillStyle(0x0d1a0d,1); plg.fillRoundedRect(0,0,88,20,3);
-    plg.fillStyle(0x00ff41,0.15); plg.fillRoundedRect(1,1,86,6,{tl:2,tr:2,bl:0,br:0});
-    plg.fillStyle(0xff0044,0.8); plg.fillCircle(12,4,2);
-    plg.fillStyle(0xffaa00,0.8); plg.fillCircle(19,4,2);
-    plg.fillStyle(0x00ff41,0.8); plg.fillCircle(26,4,2);
-    plg.lineStyle(1,0x00ff41,0.7); plg.strokeRoundedRect(0,0,88,20,3);
-    plg.lineStyle(0.5,0x00ff41,0.1); plg.beginPath(); plg.moveTo(2,10); plg.lineTo(86,10); plg.strokePath();
-    plg.fillStyle(0x00ff41,0.06); plg.fillRect(5,12,78,6);
-    plg.generateTexture('platform',88,20); plg.destroy();
+    // Base dark red panel
+    plg.fillStyle(0x1a0505,1); plg.fillRect(0,0,88,10);
+    // Red glow top edge
+    plg.fillStyle(0xff0044,0.25); plg.fillRect(0,0,88,3);
+    // Bright neon line
+    plg.fillStyle(0xff0044,0.9); plg.fillRect(0,0,88,1);
+    plg.fillStyle(0xff2266,0.6); plg.fillRect(0,2,88,1);
+    // Small LED dots
+    plg.fillStyle(0xff0044,1); plg.fillCircle(10,7,1.5);
+    plg.fillStyle(0xffaa00,0.8); plg.fillCircle(25,7,1.5);
+    plg.fillStyle(0xff0044,1); plg.fillCircle(40,7,1.5);
+    plg.fillStyle(0xffaa00,0.8); plg.fillCircle(55,7,1.5);
+    plg.fillStyle(0xff0044,1); plg.fillCircle(70,7,1.5);
+    // Glow under
+    plg.fillStyle(0xff0044,0.08); plg.fillRect(0,3,88,7);
+    plg.lineStyle(1,0xff0044,0.3); plg.strokeRect(0,0,88,10);
+    plg.generateTexture('platform',88,10); plg.destroy();
     // Load premium platform via Image()
     this.platImg = new Image();
     this.platImg.onload = () => {
@@ -475,6 +483,7 @@ class BootScene extends Phaser.Scene {
     enemy.startX = x;
     enemy.startY = y;
     enemy.phase = Math.random() * Math.PI * 2;
+    enemy.phaseSpeed = 0.02 + Math.random() * 0.03; // unique speed per enemy
     enemy.speed = type === 'firewall' ? 60 : type === 'bot' ? 80 : 40;
     enemy.range = type === 'firewall' ? 60 : type === 'bot' ? 100 : 40;
 
@@ -696,7 +705,7 @@ class BootScene extends Phaser.Scene {
       if (!e.active) { this.enemies.splice(i, 1); continue; }
       if (e.y > this.player.y + H + 100) { e.destroy(); this.enemies.splice(i, 1); continue; }
 
-      e.phase += 0.03 * dt;
+      e.phase += e.phaseSpeed * dt;
       if (e.enemyType === 'firewall') {
         e.x = e.startX + Math.sin(e.phase) * e.range;
         e.rotation += 0.05 * dt;
