@@ -406,33 +406,12 @@ class BootScene extends Phaser.Scene {
   onEnemyHit(player, enemy) {
     if (this.gameOver) return;
     this.gameOver = true;
-
-    // Disable physics interactions immediately (never destroy in callback)
-    player.body.setVelocity(0, 0);
-    player.body.setAllowGravity(false);
-    player.setTint(0xff0044);
-
-    // Schedule game over screen on next frame
-    this.time.delayedCall(16, () => {
-      this.showGameOver(enemy.x, enemy.y);
-    });
+    // Just flag death - update() loop will handle the rest
   }
 
-  showGameOver(ex, ey) {
+  showGameOver() {
     if (this.endingShown) return;
     this.endingShown = true;
-
-    // Effects
-    for (let i = 0; i < 20; i++) {
-      this.landParticles.emitParticleAt(ex, ey);
-    }
-    this.cameras.main.shake(300, 0.02);
-
-    // Destroy all enemies after physics is done
-    this.time.delayedCall(100, () => {
-      for (const e of this.enemies) { if (e && e.active) e.destroy(); }
-      this.enemies = [];
-    });
 
     // Save score
     const prev = parseInt(localStorage.getItem('dos_highscore') || '0');
@@ -445,35 +424,27 @@ class BootScene extends Phaser.Scene {
     this.player.setVisible(false);
 
     // Overlay
-    this.add.rectangle(W/2, H/2 - scrollY, W, H, 0x000000, 0.75).setDepth(200);
+    const gfx = this.add.graphics().setDepth(200);
+    gfx.fillStyle(0x000000, 0.75);
+    gfx.fillRect(0, -scrollY, W, H);
+
     this.add.text(W/2, H/2 - 85 - scrollY, 'SYSTEM FAILURE', {
-      fontSize:'30px', fontFamily:'Courier New, monospace', fontStyle:'bold', color:'#ff0044',
-      stroke:'#000', strokeThickness:3
-    }).setOrigin(0.5).setDepth(201);
-    this.add.text(W/2, H/2 - 35 - scrollY, 'HEIGHT: ' + this.score + 'm', {
-      fontSize:'20px', fontFamily:'Courier New, monospace', fontStyle:'bold', color:'#00ff41'
-    }).setOrigin(0.5).setDepth(201);
-    this.add.text(W/2, H/2 - 5 - scrollY, 'BEST: ' + (localStorage.getItem('dos_highscore') || '0') + 'm', {
-      fontSize:'13px', fontFamily:'Courier New, monospace', color:'#666'
+      fontSize:'30px', fontFamily:'Courier New',color:'#ff0044'
     }).setOrigin(0.5).setDepth(201);
 
-    const restartBtn = this.add.text(W/2 - 80, H/2 + 40 - scrollY, '>  RESTART  <', {
-      fontSize:'15px', fontFamily:'Courier New, monospace', fontStyle:'bold', color:'#00ff41'
-    }).setOrigin(0.5).setDepth(201).setInteractive({ useHandCursor: true });
-    restartBtn.on('pointerdown', () => { location.href = location.pathname + '?restart=1'; });
-    restartBtn.on('pointerover', () => restartBtn.setColor('#ffffff'));
-    restartBtn.on('pointerout', () => restartBtn.setColor('#00ff41'));
+    this.add.text(W/2, H/2 - 35 - scrollY, 'HEIGHT: '+this.score+'m', {
+      fontSize:'20px', fontFamily:'Courier New',color:'#00ff41'
+    }).setOrigin(0.5).setDepth(201);
 
-    const homeBtn = this.add.text(W/2 + 80, H/2 + 40 - scrollY, '[ HOME ]', {
-      fontSize:'15px', fontFamily:'Courier New, monospace', fontStyle:'bold', color:'#555'
-    }).setOrigin(0.5).setDepth(201).setInteractive({ useHandCursor: true });
-    homeBtn.on('pointerdown', () => { location.reload(); });
-    homeBtn.on('pointerover', () => homeBtn.setColor('#00ff41'));
-    homeBtn.on('pointerout', () => homeBtn.setColor('#555'));
+    this.add.text(W/2, H/2 + 40 - scrollY, '> RESTART <', {
+      fontSize:'18px', fontFamily:'Courier New',color:'#00ff41'
+    }).setOrigin(0.5).setDepth(201).setInteractive().on('pointerdown',
+      ()=>location.href=location.pathname+'?restart=1');
 
-    this.input.keyboard.once('keydown-SPACE', () => { location.href = location.pathname + '?restart=1'; });
-    this.input.keyboard.once('keydown-ENTER', () => { location.href = location.pathname + '?restart=1'; });
-    this.input.keyboard.once('keydown-ESC', () => { location.reload(); });
+    this.add.text(W/2, H/2 + 70 - scrollY, '[ HOME ]', {
+      fontSize:'14px', fontFamily:'Courier New',color:'#555'
+    }).setOrigin(0.5).setDepth(201).setInteractive().on('pointerdown',
+      ()=>location.reload());
   }
 
   // ── UPDATE ─────────────────────────────────────────────────────────────
@@ -511,7 +482,15 @@ class BootScene extends Phaser.Scene {
       this.rainGfx.visible = false;
     }
 
-    if (this.mode !== 'game' || this.gameOver) return;
+    if (this.mode !== 'game') {
+      return;
+    }
+
+    // ── GAME OVER CHECK ──
+    if (this.gameOver && !this.endingShown) {
+      this.showGameOver();
+      return;
+    }
 
     // ── GAME LOGIC ──
     const body = this.player.body;
