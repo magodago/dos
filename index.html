@@ -140,7 +140,7 @@ class BootScene extends Phaser.Scene {
         this.textures.addImage('player_premium', this.premiumImg);
         if (this.player && this.player.active) {
           this.player.setTexture('player_premium');
-          this.player.setScale(1.5);
+          this.player.setScale(1.2);
           this.player.setAlpha(1);
           this.player.visible = true;
         }
@@ -287,7 +287,7 @@ class BootScene extends Phaser.Scene {
     this.player.setDepth(10);
     this.player.visible = true;
     this.player.setAlpha(1);
-    this.player.setScale(2.5);
+    this.player.setScale(1.2);
     this.player.squashTween = 1;
     this.player.landedTime = 0;
 
@@ -691,7 +691,7 @@ class BootScene extends Phaser.Scene {
       } else {
         e.x = e.startX + Math.sin(e.phase * 0.5) * 30;
         e.y = e.startY + Math.sin(e.phase * 0.8) * 15;
-        e.setScale(1 + 0.15 * Math.sin(e.phase * 2));
+        e.setScale(0.8 + 0.1 * Math.sin(e.phase * 2));
       }
       e.body.updateFromGameObject();
     }
