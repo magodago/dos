@@ -141,7 +141,7 @@ class BootScene extends Phaser.Scene {
         this.textures.addImage('player_premium', this.premiumImg);
         if (this.player && this.player.active) {
           this.player.setTexture('player_premium');
-          this.player.setScale(0.5);
+          this.player.setScale(0.35);
           this.player.setAlpha(1);
           this.player.visible = true;
         }
@@ -291,7 +291,7 @@ class BootScene extends Phaser.Scene {
     this.player.setDepth(10);
     this.player.visible = true;
     this.player.setAlpha(1);
-    this.player.setScale(0.5);
+    this.player.setScale(0.35);
     this.player.squashTween = 1;
     this.player.landedTime = 0;
 
@@ -319,6 +319,7 @@ class BootScene extends Phaser.Scene {
 
     // Speed lines particles
     this.speedLineGfx = this.add.graphics().setDepth(5);
+    this.platformGlowGfx = this.add.graphics().setDepth(3);
 
     // Collision
     this.physics.add.collider(this.player, this.platformGroup, this.onLand, (player, platform) => {
@@ -592,6 +593,15 @@ class BootScene extends Phaser.Scene {
 
     // Remove far platforms
     this.platformGroup.children.each((p) => { if (p.y > this.player.y + H + 200) p.destroy(); });
+
+    // ── PLATFORM GLOW (breathing neon) ──
+    this.platformGlowGfx.clear();
+    const breathe = 0.04 + 0.03 * Math.sin(this.animTime * 2);
+    this.platformGroup.children.each(p => {
+      if (!p.active) return;
+      this.platformGlowGfx.fillStyle(0xff0044, breathe);
+      this.platformGlowGfx.fillRect(p.x - 44, p.y - 4, 88, 8);
+    });
 
     // Game over
     if (this.player.y > H + 150) {
