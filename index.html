@@ -62,9 +62,9 @@ class MenuScene extends Phaser.Scene {
       fontSize: Math.min(110, Math.floor(W * 0.14)) + 'px',
       fontFamily: 'Courier New, monospace',
       fontStyle: 'bold',
-      color: '#00ff41',
-      stroke: '#003300',
-      strokeThickness: 4
+      color: '#e0ffe0',
+      stroke: '#00ff41',
+      strokeThickness: 3
     }).setOrigin(0.5).setAlpha(0);
 
     // Neon glow behind title (multiple text layers)
@@ -74,8 +74,8 @@ class MenuScene extends Phaser.Scene {
       fontStyle: 'bold',
       color: '#00ff41',
       stroke: '#00ff41',
-      strokeThickness: 20
-    }).setOrigin(0.5).setAlpha(0.15);
+      strokeThickness: 10
+    }).setOrigin(0.5).setAlpha(0.2);
 
     this.titleGlow2 = this.add.text(W / 2, H * 0.28, 'D.O.S', {
       fontSize: Math.min(110, Math.floor(W * 0.14)) + 'px',
@@ -83,8 +83,18 @@ class MenuScene extends Phaser.Scene {
       fontStyle: 'bold',
       color: '#00ff41',
       stroke: '#00ff41',
-      strokeThickness: 40
-    }).setOrigin(0.5).setAlpha(0.06);
+      strokeThickness: 25
+    }).setOrigin(0.5).setAlpha(0.08);
+
+    // Title accent - smaller glow underneath
+    this.titleGlow3 = this.add.text(W / 2, H * 0.28, 'D.O.S', {
+      fontSize: Math.min(110, Math.floor(W * 0.14)) + 'px',
+      fontFamily: 'Courier New, monospace',
+      fontStyle: 'bold',
+      color: '#ffffff',
+      stroke: '#ffffff',
+      strokeThickness: 2
+    }).setOrigin(0.5).setAlpha(0);
 
     // ── Subtitle ──
     this.subtitle = this.add.text(W / 2, H * 0.28 + Math.min(60, Math.floor(W * 0.08)), 'DAVID OPERATION SYSTEM', {
@@ -305,7 +315,7 @@ class MenuScene extends Phaser.Scene {
 
     if (this.entryProgress > 1.0 && !this.titleShown) {
       this.titleShown = true;
-      this.tweens.add({ targets: [this.titleText, this.titleGlow1, this.titleGlow2], alpha: { from: 0, to: 1 }, duration: 800, ease: 'Power2' });
+      this.tweens.add({ targets: [this.titleText, this.titleGlow1, this.titleGlow2, this.titleGlow3], alpha: { from: 0, to: 1 }, duration: 800, ease: 'Power2' });
       const originalTitle = this.titleText.text;
       // Glitch entrance
       this.time.addEvent({
