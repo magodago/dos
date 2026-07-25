@@ -286,6 +286,10 @@ class BootScene extends Phaser.Scene {
 
   // ── GAME START ─────────────────────────────────────────────────────────
   startGame() {
+    // Clean up URL if it had restart param
+    if (location.search.includes('restart=1')) {
+      window.history.replaceState({}, '', location.pathname);
+    }
     this.mode = 'game';
     this.gameOver = false;
     this.score = 0;
