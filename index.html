@@ -409,14 +409,21 @@ class GameScene extends Phaser.Scene {
       stroke: '#000', strokeThickness: 2
     }).setScrollFactor(0).setDepth(100);
 
+    // ── Particle texture ──
+    const partGfx = this.make.graphics({ add: false });
+    partGfx.fillStyle(0x00ff41, 1);
+    partGfx.fillCircle(4, 4, 4);
+    partGfx.generateTexture('particle', 8, 8);
+    partGfx.destroy();
+
     // ── Particles for landing ──
-    this.landParticles = this.add.particles(0, 0, 'player', {
-      speed: { min: 20, max: 60 },
+    this.landParticles = this.add.particles(0, 0, 'particle', {
+      speed: { min: 30, max: 80 },
       angle: { min: 200, max: 340 },
-      scale: { start: 0.3, end: 0 },
-      lifespan: 400,
-      quantity: 6,
-      tint: 0x00ff41,
+      scale: { start: 0.6, end: 0 },
+      lifespan: 500,
+      quantity: 8,
+      tint: [0x00ff41, 0x00cc33, 0xffffff],
       emitting: false
     });
     this.landParticles.setDepth(11);
