@@ -8,53 +8,29 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { width: 100%; height: 100%; overflow: hidden; background: #05050a; font-family: 'Courier New', monospace; }
   #game-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
-  #ui-overlay {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 1; pointer-events: none;
-    display: flex; flex-direction: column; align-items: center;
-    padding-top: 12vh;
-  }
-  #ui-overlay * { pointer-events: auto; }
-  .title-main {
-    font-size: clamp(48px, 14vw, 120px); font-weight: 900; letter-spacing: 6px;
-    color: transparent; -webkit-text-stroke: 3px #00ff41;
-    text-shadow: 0 0 10px rgba(0,255,65,0.8), 0 0 25px rgba(0,255,65,0.5), 0 0 50px rgba(0,255,65,0.3), 0 0 100px rgba(0,255,65,0.15);
-    opacity: 0; animation: titleGlow 3s ease-out forwards; animation-delay: 0.5s;
-  }
-  @keyframes titleGlow { 0% { opacity:0; transform:scale(0.8); filter:blur(8px); } 60% { opacity:1; transform:scale(1.05); filter:blur(0); } 100% { opacity:1; transform:scale(1); filter:blur(0); } }
-  .title-sub {
-    font-size: clamp(11px, 2.5vw, 20px); font-weight: 700; letter-spacing: 8px;
-    color: #fff; text-shadow: 0 0 5px #00ff41, 0 0 15px #00ff41, 0 0 30px rgba(0,255,65,0.7), 0 0 60px rgba(0,255,65,0.4);
-    margin-top: 0.5vh; opacity: 0; animation: subFade 1.5s ease-out forwards; animation-delay: 1.8s;
-  }
-  @keyframes subFade { 0% { opacity:0; transform:translateY(10px); } 100% { opacity:1; transform:translateY(0); } }
-  .title-tag {
-    font-size: clamp(9px, 1.6vw, 14px); font-weight: 700; color: #ff1744; letter-spacing: 4px; margin-top: 1.5vh;
-    text-shadow: 0 0 5px #ff1744, 0 0 15px rgba(255,23,68,0.7), 0 0 30px rgba(255,23,68,0.4), 0 0 60px rgba(255,23,68,0.2);
-    opacity: 0; animation: tagFade 1.2s ease-out forwards; animation-delay: 2.8s;
-  }
-  @keyframes tagFade { 0% { opacity:0; } 100% { opacity:1; } }
-  .btn-start {
-    margin-top: 10vh; padding: 14px 40px; background: transparent;
-    border: 1px solid rgba(0,255,65,0.4); border-radius: 4px; color: #00ff41;
-    font-family: 'Courier New', monospace; font-size: clamp(14px, 2.2vw, 22px); font-weight: 700;
-    cursor: pointer; pointer-events: auto; opacity: 0;
-    animation: btnFade 1s ease-out forwards; animation-delay: 3.8s;
-    transition: all 0.3s ease; text-shadow: 0 0 10px rgba(0,255,65,0.3); letter-spacing: 3px;
-  }
-  @keyframes btnFade { 0% { opacity:0; transform:translateY(20px); } 100% { opacity:1; transform:translateY(0); } }
-  .btn-start:hover { border-color: #00ff41; box-shadow: 0 0 20px rgba(0,255,65,0.3), inset 0 0 20px rgba(0,255,65,0.1); color: #fff; }
-  .btn-start .cursor { animation: blink 1s step-end infinite; }
-  @keyframes blink { 50% { opacity:0; } }
-  .btn-start.clicked { animation: btnGlitchOut 0.8s ease-out forwards; }
-  @keyframes btnGlitchOut { 0% { opacity:1; transform:scale(1); } 20% { opacity:1; transform:translateX(-5px) scale(1.02); filter:hue-rotate(90deg); } 40% { opacity:0.8; transform:translateX(5px); } 60% { opacity:0.6; transform:scale(1.1); filter:brightness(2); } 100% { opacity:0; transform:scale(2); filter:brightness(3); } }
-  .version { position: absolute; bottom: 15px; right: 15px; font-size: 10px; color: #333; font-family: 'Courier New', monospace; opacity: 0; animation: subFade 1s ease-out forwards; animation-delay: 4s; }
-  .glitch-overlay { position: fixed; top:0; left:0; width:100%; height:100%; z-index:2; pointer-events:none; opacity:0; }
-  .glitch-overlay.active { animation: glitchFlash 0.3s ease-out forwards; }
-  @keyframes glitchFlash { 0% { opacity:0; } 10% { opacity:0.3; background:rgba(0,255,65,0.15); } 20% { opacity:0; } 30% { opacity:0.2; background:rgba(255,255,255,0.1); } 50% { opacity:0; } 70% { opacity:0.15; background:rgba(0,255,65,0.1); } 100% { opacity:0; } }
-  #game-hud { display: none; position: absolute; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; }
-  #game-hud .hud-height { position: absolute; top: 15px; left: 15px; font-size: 14px; font-weight: bold; color: #00ff41; text-shadow: 0 0 5px rgba(0,255,65,0.5); }
-  #game-hud .hud-layer { position: absolute; top: 15px; right: 15px; font-size: 11px; color: #444; }
+  #ui-overlay { position: absolute; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; display:flex; flex-direction:column; align-items:center; padding-top:12vh; }
+  #ui-overlay * { pointer-events:auto; }
+  .title-main { font-size:clamp(48px,14vw,120px); font-weight:900; letter-spacing:6px; color:transparent; -webkit-text-stroke:3px #00ff41; text-shadow:0 0 10px rgba(0,255,65,0.8),0 0 25px rgba(0,255,65,0.5),0 0 50px rgba(0,255,65,0.3),0 0 100px rgba(0,255,65,0.15); opacity:0; animation:titleGlow 3s ease-out forwards; animation-delay:0.5s; }
+  @keyframes titleGlow { 0%{opacity:0;transform:scale(0.8);filter:blur(8px)} 60%{opacity:1;transform:scale(1.05);filter:blur(0)} 100%{opacity:1;transform:scale(1);filter:blur(0)} }
+  .title-sub { font-size:clamp(11px,2.5vw,20px); font-weight:700; letter-spacing:8px; color:#fff; text-shadow:0 0 5px #00ff41,0 0 15px #00ff41,0 0 30px rgba(0,255,65,0.7),0 0 60px rgba(0,255,65,0.4); margin-top:0.5vh; opacity:0; animation:subFade 1.5s ease-out forwards; animation-delay:1.8s; }
+  @keyframes subFade { 0%{opacity:0;transform:translateY(10px)} 100%{opacity:1;transform:translateY(0)} }
+  .title-tag { font-size:clamp(9px,1.6vw,14px); font-weight:700; color:#ff1744; letter-spacing:4px; margin-top:1.5vh; text-shadow:0 0 5px #ff1744,0 0 15px rgba(255,23,68,0.7),0 0 30px rgba(255,23,68,0.4),0 0 60px rgba(255,23,68,0.2); opacity:0; animation:tagFade 1.2s ease-out forwards; animation-delay:2.8s; }
+  @keyframes tagFade { 0%{opacity:0} 100%{opacity:1} }
+  .btn-start { margin-top:10vh; padding:14px 40px; background:transparent; border:1px solid rgba(0,255,65,0.4); border-radius:4px; color:#00ff41; font-family:'Courier New',monospace; font-size:clamp(14px,2.2vw,22px); font-weight:700; cursor:pointer; opacity:0; animation:btnFade 1s ease-out forwards; animation-delay:3.8s; transition:all 0.3s ease; text-shadow:0 0 10px rgba(0,255,65,0.3); letter-spacing:3px; }
+  @keyframes btnFade { 0%{opacity:0;transform:translateY(20px)} 100%{opacity:1;transform:translateY(0)} }
+  .btn-start:hover { border-color:#00ff41; box-shadow:0 0 20px rgba(0,255,65,0.3),inset 0 0 20px rgba(0,255,65,0.1); color:#fff; }
+  .btn-start .cursor { animation:blink 1s step-end infinite; }
+  @keyframes blink { 50%{opacity:0} }
+  .btn-start.clicked { animation:btnGlitchOut 0.8s ease-out forwards; }
+  @keyframes btnGlitchOut { 0%{opacity:1;transform:scale(1)} 20%{opacity:1;transform:translateX(-5px) scale(1.02);filter:hue-rotate(90deg)} 40%{opacity:0.8;transform:translateX(5px)} 60%{opacity:0.6;transform:scale(1.1);filter:brightness(2)} 100%{opacity:0;transform:scale(2);filter:brightness(3)} }
+  .version { position:absolute; bottom:15px; right:15px; font-size:10px; color:#333; opacity:0; animation:subFade 1s ease-out forwards; animation-delay:4s; }
+  .glitch-overlay { position:fixed; top:0; left:0; width:100%; height:100%; z-index:2; pointer-events:none; opacity:0; }
+  .glitch-overlay.active { animation:glitchFlash 0.3s ease-out forwards; }
+  @keyframes glitchFlash { 0%{opacity:0} 10%{opacity:0.3;background:rgba(0,255,65,0.15)} 20%{opacity:0} 30%{opacity:0.2;background:rgba(255,255,255,0.1)} 50%{opacity:0} 70%{opacity:0.15;background:rgba(0,255,65,0.1)} 100%{opacity:0} }
+  #game-hud { display:none; position:absolute; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; }
+  #game-hud .hud-height { position:absolute; top:15px; left:15px; font-size:14px; font-weight:bold; color:#00ff41; text-shadow:0 0 5px rgba(0,255,65,0.5); }
+  #game-hud .hud-layer { position:absolute; top:15px; right:15px; font-size:11px; }
+  #game-hud .hud-milestone { position:absolute; top:50%; left:50%; font-size:28px; font-weight:bold; opacity:0; transform:translate(-50%,-50%) scale(0.5); text-shadow:0 0 20px currentColor; }
 </style>
 </head>
 <body>
@@ -64,160 +40,212 @@
   <div class="title-sub">DAVID OPERATION SYSTEM</div>
   <div class="title-tag">/// HACK THE SYSTEM ///</div>
   <button class="btn-start" id="btnStart"><span>> </span>INITIALIZE<span class="cursor">_</span><span> <</span></button>
-  <div class="version">v1.0 // BUILD 2026</div>
+  <div class="version">v2.0 // BUILD 2026</div>
 </div>
 <div id="game-hud">
   <div class="hud-height" id="hudHeight">HEIGHT: 0m</div>
   <div class="hud-layer" id="hudLayer">SHELL</div>
+  <div class="hud-milestone" id="hudMilestone"></div>
 </div>
 <div class="glitch-overlay" id="glitchOverlay"></div>
 <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
 <script>
-const GAME_W = Math.min(window.innerWidth, 800);
-const GAME_H = Math.min(window.innerHeight, 900);
-const PLATFORM_SPACING = 75;
-const GRAVITY = 900;
-const BOUNCE_VEL = -520;
-const MOVE_SPEED = 200;
-const WORLD_LIMIT = 20000;
-
+const GW = Math.min(window.innerWidth, 800);
+const GH = Math.min(window.innerHeight, 900);
+const PS = { PLATFORM_SPACING: 75, GRAVITY: 900, BOUNCE: -520, SPEED: 200, WORLD_LIMIT: 20000 };
 const LAYERS = [
-  { min: 0, name: 'SHELL', color: '#444', bg: '#05050a' },
-  { min: 500, name: 'KERNEL', color: '#00d4ff', bg: '#05050a' },
-  { min: 1500, name: 'FIREWALL', color: '#ff0044', bg: '#05050a' },
-  { min: 4000, name: 'MAINFRAME', color: '#aa00ff', bg: '#05050a' }
+  { min:0, name:'SHELL', color:'#444' },
+  { min:500, name:'KERNEL', color:'#00d4ff' },
+  { min:1500, name:'FIREWALL', color:'#ff0044' },
+  { min:4000, name:'MAINFRAME', color:'#aa00ff' }
 ];
 
-// ─── SINGLE BOOT SCENE ────────────────────────────────────────────────────
 class BootScene extends Phaser.Scene {
   constructor() { super('BootScene'); }
 
   create() {
-    this.mode = 'menu'; // 'menu' | 'game'
+    this.mode = 'menu';
     this.gameOver = false;
     this.score = 0;
     this.moveDir = 0;
     this.rainDrops = [];
     this.menuParticles = [];
+    this.enemies = [];
+    this.lastPlatformKey = 0;
+    this.highestY = Infinity;
+    this.animTime = 0;
+    this.speedLines = [];
+    this.lastMilestone = 0;
 
-    this.setupMenu();
     this.setupTextures();
     this.setupGame();
     this.setupBackground();
     this.setupInput();
-
-    // Menu-only: start background effects
     this.startMenuEffects();
     this.playStartupSound();
   }
 
+  // ── TEXTURES ──────────────────────────────────────────────────────────
   setupTextures() {
-    // Player texture (premium) - cyberpunk figure
+    // Player base sprite
     const pg = this.make.graphics({ add: false });
-    // Outer glow aura
-    pg.fillStyle(0x00ff41, 0.1); pg.fillCircle(24,24,26);
-    pg.fillStyle(0x00cc33, 0.15); pg.fillCircle(24,24,22);
-    // Body/torso (trench coat)
-    pg.fillStyle(0x0a1a0a, 1);
-    pg.beginPath(); pg.moveTo(14, 22); pg.lineTo(34, 22); pg.lineTo(36, 40); pg.lineTo(28, 42);
-    pg.lineTo(28, 48); pg.lineTo(20, 48); pg.lineTo(20, 42); pg.lineTo(12, 40); pg.closePath();
-    pg.fillPath();
-    // Coat glow outline
-    pg.lineStyle(1, 0x00ff41, 0.4);
-    pg.beginPath(); pg.moveTo(14, 22); pg.lineTo(34, 22); pg.lineTo(36, 40);
-    pg.lineTo(28, 42); pg.lineTo(28, 48); pg.lineTo(20, 48); pg.lineTo(20, 42);
-    pg.lineTo(12, 40); pg.closePath(); pg.strokePath();
-    // Head
-    pg.fillStyle(0x1a2a1a, 1); pg.fillCircle(24, 16, 8);
-    pg.lineStyle(1, 0x00ff41, 0.6); pg.strokeCircle(24, 16, 8);
-    // Eyes (glowing)
-    pg.fillStyle(0x00ff41, 1); pg.fillCircle(21, 15, 1.5); pg.fillCircle(27, 15, 1.5);
-    pg.fillStyle(0xffffff, 0.8); pg.fillCircle(21, 15, 0.8); pg.fillCircle(27, 15, 0.8);
-    // Cape trail
-    pg.fillStyle(0x0d1a0d, 0.8);
-    pg.beginPath(); pg.moveTo(12, 40); pg.lineTo(6, 46); pg.lineTo(8, 38); pg.closePath(); pg.fillPath();
-    pg.beginPath(); pg.moveTo(36, 40); pg.lineTo(42, 46); pg.lineTo(40, 38); pg.closePath(); pg.fillPath();
+    this.drawPlayerTo(pg, 0, 0, 1);
     pg.generateTexture('player', 48, 48); pg.destroy();
 
-    // Platform texture (premium) - terminal window style
+    // Platform
     const plg = this.make.graphics({ add: false });
-    // Dark panel background
-    plg.fillStyle(0x0d1a0d, 1);
-    plg.fillRoundedRect(0, 0, 88, 20, 3);
-    // Header bar (like a terminal window title bar)
-    plg.fillStyle(0x00ff41, 0.15);
-    plg.fillRoundedRect(1, 1, 86, 6, {tl:2, tr:2, bl:0, br:0});
-    // Header dots (minimize, maximize, close - cyberpunk style)
-    plg.fillStyle(0xff0044, 0.8); plg.fillCircle(12, 4, 2);
-    plg.fillStyle(0xffaa00, 0.8); plg.fillCircle(19, 4, 2);
-    plg.fillStyle(0x00ff41, 0.8); plg.fillCircle(26, 4, 2);
-    // Border glow
-    plg.lineStyle(1, 0x00ff41, 0.7);
-    plg.strokeRoundedRect(0, 0, 88, 20, 3);
-    // Inner scanline
-    plg.lineStyle(0.5, 0x00ff41, 0.1);
-    plg.beginPath(); plg.moveTo(2, 10); plg.lineTo(86, 10); plg.strokePath();
-    // Text simulation
-    plg.fillStyle(0x00ff41, 0.08);
-    plg.fillRect(5, 12, 78, 6);
-    plg.generateTexture('platform', 88, 20);
-    plg.destroy();
+    plg.fillStyle(0x0d1a0d,1); plg.fillRoundedRect(0,0,88,20,3);
+    plg.fillStyle(0x00ff41,0.15); plg.fillRoundedRect(1,1,86,6,{tl:2,tr:2,bl:0,br:0});
+    plg.fillStyle(0xff0044,0.8); plg.fillCircle(12,4,2);
+    plg.fillStyle(0xffaa00,0.8); plg.fillCircle(19,4,2);
+    plg.fillStyle(0x00ff41,0.8); plg.fillCircle(26,4,2);
+    plg.lineStyle(1,0x00ff41,0.7); plg.strokeRoundedRect(0,0,88,20,3);
+    plg.lineStyle(0.5,0x00ff41,0.1); plg.beginPath(); plg.moveTo(2,10); plg.lineTo(86,10); plg.strokePath();
+    plg.fillStyle(0x00ff41,0.06); plg.fillRect(5,12,78,6);
+    plg.generateTexture('platform',88,20); plg.destroy();
 
     // Particle
     const ptg = this.make.graphics({ add: false });
-    ptg.fillStyle(0x00ff41, 1); ptg.fillCircle(4,4,4);
-    ptg.generateTexture('particle', 8, 8); ptg.destroy();
+    ptg.fillStyle(0x00ff41,1); ptg.fillCircle(4,4,4);
+    ptg.generateTexture('particle',8,8); ptg.destroy();
+
+    // Enemy textures
+    this.makeEnemyTextures();
   }
 
-  setupMenu() {
-    this.menuContainer = this.add.container(0, 0).setDepth(100).setVisible(true);
-    this.menuGfx = this.add.graphics();
-    // No menu overlay objects needed in Phaser — HTML overlay handles it
+  makeEnemyTextures() {
+    // Firewall: rotating shield
+    const fg = this.make.graphics({ add: false });
+    fg.lineStyle(2, 0xff0044, 0.9); fg.strokeCircle(18,18,16);
+    fg.lineStyle(3, 0xff0044, 0.4); fg.strokeCircle(18,18,20);
+    for (let a=0; a<8; a++) {
+      const ang = a * Math.PI/4;
+      fg.lineStyle(2, 0xff0044, 0.7);
+      fg.beginPath(); fg.moveTo(18+12*Math.cos(ang), 18+12*Math.sin(ang));
+      fg.lineTo(18+18*Math.cos(ang), 18+18*Math.sin(ang)); fg.strokePath();
+    }
+    fg.fillStyle(0xff0044, 0.3); fg.fillCircle(18,18,10);
+    fg.fillStyle(0xffffff, 0.8); fg.fillCircle(18,18,4);
+    fg.generateTexture('enemy_firewall', 40, 40); fg.destroy();
+
+    // Virus: pulsing blob with tentacles
+    const vg = this.make.graphics({ add: false });
+    vg.fillStyle(0xaa00ff, 0.6); vg.fillCircle(18,18,14);
+    vg.fillStyle(0xcc44ff, 0.4); vg.fillCircle(18,18,10);
+    vg.fillStyle(0xff44ff, 0.3); vg.fillCircle(18,18,6);
+    for (let a=0; a<6; a++) {
+      const ang = a * Math.PI/3 + 0.3;
+      vg.lineStyle(2, 0xaa00ff, 0.5);
+      vg.beginPath(); vg.moveTo(18+8*Math.cos(ang), 18+8*Math.sin(ang));
+      const len = 10 + Math.random()*6;
+      vg.lineTo(18+len*Math.cos(ang), 18+len*Math.sin(ang)); vg.strokePath();
+    }
+    vg.fillStyle(0x00ff41, 0.7); vg.fillCircle(14,14,2); vg.fillCircle(22,14,2);
+    vg.generateTexture('enemy_virus', 36, 36); vg.destroy();
+
+    // Antivirus Bot: angular drone
+    const bg = this.make.graphics({ add: false });
+    bg.lineStyle(2, 0x00d4ff, 0.9);
+    bg.beginPath(); bg.moveTo(10,5); bg.lineTo(30,5); bg.lineTo(35,20);
+    bg.lineTo(30,35); bg.lineTo(10,35); bg.lineTo(5,20); bg.closePath(); bg.strokePath();
+    bg.lineStyle(1, 0x00d4ff, 0.4);
+    bg.beginPath(); bg.moveTo(5,20); bg.lineTo(35,20); bg.strokePath();
+    bg.beginPath(); bg.moveTo(20,5); bg.lineTo(20,35); bg.strokePath();
+    bg.fillStyle(0x00d4ff, 0.2); bg.fillCircle(20,20,10);
+    bg.fillStyle(0x00d4ff, 0.8); bg.fillCircle(20,20,3);
+    bg.generateTexture('enemy_bot', 40, 40); bg.destroy();
   }
 
+  // ── PLAYER DRAWING ──────────────────────────────────────────────────
+  drawPlayerTo(g, x, y, t) {
+    const bob = Math.sin(t * 3) * 0.5;
+    const cx = x + 24, cy = y + 24 + bob;
+    // Aura
+    g.fillStyle(0x00ff41, 0.08 + 0.04 * Math.sin(t * 2));
+    g.fillCircle(cx, cy, 28);
+    g.fillStyle(0x00ff41, 0.12 + 0.06 * Math.sin(t * 2.5));
+    g.fillCircle(cx, cy, 22);
+    // Body
+    g.fillStyle(0x0a1a0a, 1);
+    g.beginPath(); g.moveTo(cx-10, cy-2); g.lineTo(cx+10, cy-2);
+    g.lineTo(cx+12, cy+16); g.lineTo(cx+6, cy+18); g.lineTo(cx+6, cy+24);
+    g.lineTo(cx-6, cy+24); g.lineTo(cx-6, cy+18); g.lineTo(cx-12, cy+16); g.closePath(); g.fillPath();
+    // Coat outline
+    g.lineStyle(1, 0x00ff41, 0.4 + 0.2 * Math.sin(t * 2));
+    g.beginPath(); g.moveTo(cx-10, cy-2); g.lineTo(cx+10, cy-2);
+    g.lineTo(cx+12, cy+16); g.lineTo(cx+6, cy+18); g.lineTo(cx+6, cy+24);
+    g.lineTo(cx-6, cy+24); g.lineTo(cx-6, cy+18); g.lineTo(cx-12, cy+16); g.closePath(); g.strokePath();
+    // Head
+    g.fillStyle(0x1a2a1a, 1); g.fillCircle(cx, cy-8, 8);
+    g.lineStyle(1, 0x00ff41, 0.6); g.strokeCircle(cx, cy-8, 8);
+    // Eyes
+    const eyeGlow = 0.7 + 0.3 * Math.sin(t * 4);
+    g.fillStyle(Phaser.Display.Color.GetColor(0, Math.floor(255*eyeGlow), 65), 1);
+    g.fillCircle(cx-3, cy-9, 1.8); g.fillCircle(cx+3, cy-9, 1.8);
+    g.fillStyle(0xffffff, 0.8); g.fillCircle(cx-3, cy-9, 0.8); g.fillCircle(cx+3, cy-9, 0.8);
+    // Cape
+    const capeSway = Math.sin(t * 4) * 2;
+    g.fillStyle(0x0d1a0d, 0.7);
+    g.beginPath(); g.moveTo(cx-10, cy+14);
+    g.lineTo(cx-16 + capeSway, cy+22); g.lineTo(cx-8, cy+16); g.closePath(); g.fillPath();
+    g.beginPath(); g.moveTo(cx+10, cy+14);
+    g.lineTo(cx+16 + capeSway, cy+22); g.lineTo(cx+8, cy+16); g.closePath(); g.fillPath();
+  }
+
+  // ── SETUP ─────────────────────────────────────────────────────────────
   setupGame() {
-    const W = GAME_W, H = GAME_H;
-    this.physics.world.setBounds(0, -WORLD_LIMIT, W, WORLD_LIMIT + H);
-    // Don't set world gravity here — will be enabled on startGame()
+    const W = GW, H = GH;
+    this.physics.world.setBounds(0, -PS.WORLD_LIMIT, W, PS.WORLD_LIMIT + H);
 
     this.platformGroup = this.physics.add.staticGroup();
     this.platformGroup.visible = false;
 
     this.player = this.physics.add.sprite(W/2, 60, 'player');
-    this.player.body.setSize(20, 28, 14, 14); // Rect body covers torso area
+    this.player.body.setSize(20, 28, 14, 14);
     this.player.setCollideWorldBounds(false);
     this.player.setBounce(0);
     this.player.body.setAllowGravity(false);
     this.player.setDepth(10);
     this.player.visible = false;
+    this.player.squashTween = 1;
+    this.player.landedTime = 0;
 
-    this.cameras.main.startFollow(this.player, false, 0.1, 0.1);
-    this.cameras.main.setBounds(0, -WORLD_LIMIT, W, WORLD_LIMIT + H);
-    this.cameras.main.stopFollow(); // Don't follow until game starts
+    this.cameras.main.setBounds(0, -PS.WORLD_LIMIT, W, PS.WORLD_LIMIT + H);
+    this.cameras.main.stopFollow();
 
+    // Player overlay (cape, aura drawn each frame)
+    this.playerOverlay = this.add.graphics().setDepth(11);
+
+    // Trail
+    this.trailGfx = this.add.graphics().setDepth(9);
+    this.trailPositions = [];
+
+    // Background + game gfx
     this.bgGfx = this.add.graphics().setDepth(-1);
+    this.bgGridGfx = this.add.graphics().setDepth(-2);
+
+    // Landing particles
     this.landParticles = this.add.particles(0, 0, 'particle', {
-      speed: { min: 30, max: 80 }, angle: { min: 200, max: 340 },
-      scale: { start: 0.6, end: 0 }, lifespan: 500, quantity: 8,
-      tint: [0x00ff41, 0x00cc33, 0xffffff], emitting: false
+      speed: { min: 30, max: 120 }, angle: { min: 200, max: 340 },
+      scale: { start: 0.8, end: 0 }, lifespan: 600, quantity: 12,
+      tint: [0x00ff41, 0x00cc33, 0xffffff, 0x88ffaa], emitting: false
     }).setDepth(11);
     this.landParticles.visible = false;
 
+    // Speed lines particles
+    this.speedLineGfx = this.add.graphics().setDepth(5);
+
+    // Collision
     this.physics.add.collider(this.player, this.platformGroup, this.onLand, (player, platform) => {
-      // One-way: only collide when player is FALLING and is above platform top
-      const pBottom = player.body.y + player.body.height;
-      const pTop = platform.body.y;
-      return player.body.velocity.y >= 0 && pBottom <= pTop + 12;
+      return player.body.velocity.y >= 0 && (player.body.y + player.body.height) <= (platform.body.y + 12);
     }, this);
   }
 
   setupBackground() {
-    const W = GAME_W, H = GAME_H;
-    this.gridGfx = this.add.graphics().setDepth(-2);
+    const W = GW, H = GH;
+    this.gridGfx = this.add.graphics().setDepth(-3);
     this.gridOffset = 0;
     this.rainGfx = this.add.graphics().setDepth(-1);
-
-    // Scanlines (always visible)
     this.scanGfx = this.add.graphics().setDepth(50);
     this.scanGfx.fillStyle(0x000000, 0.03);
     for (let y = 0; y < H; y += 3) this.scanGfx.fillRect(0, y, W, 1);
@@ -226,217 +254,262 @@ class BootScene extends Phaser.Scene {
   setupInput() {
     this.cursors = this.input.keyboard.createCursorKeys();
     this.input.on('pointerdown', (p) => {
-      if (this.mode === 'game' && !this.gameOver) this.moveDir = p.x < GAME_W/2 ? -1 : 1;
+      if (this.mode === 'game' && !this.gameOver) this.moveDir = p.x < GW/2 ? -1 : 1;
     });
     this.input.on('pointerup', () => { if (this.mode === 'game') this.moveDir = 0; });
   }
 
   startMenuEffects() {
-    const W = GAME_W, H = GAME_H;
-    for (let i = 0; i < 50; i++) {
-      this.rainDrops.push({
-        x: Phaser.Math.Between(0,W), y: Phaser.Math.Between(-H,0),
-        speed: Phaser.Math.Between(2,5), length: Phaser.Math.Between(5,18)
-      });
-    }
-    for (let i = 0; i < 30; i++) {
-      this.menuParticles.push({
-        x: Phaser.Math.Between(0,W), y: Phaser.Math.Between(0,H),
-        vx: Phaser.Math.FloatBetween(-0.2,0.2), vy: Phaser.Math.FloatBetween(-0.3,-0.6),
-        size: Phaser.Math.FloatBetween(0.5,2), alpha: Phaser.Math.FloatBetween(0.1,0.4)
-      });
-    }
+    for (let i = 0; i < 50; i++) this.rainDrops.push({ x:Phaser.Math.Between(0,GW), y:Phaser.Math.Between(-GH,0), speed:Phaser.Math.Between(2,5), length:Phaser.Math.Between(5,18) });
+    for (let i = 0; i < 30; i++) this.menuParticles.push({ x:Phaser.Math.Between(0,GW), y:Phaser.Math.Between(0,GH), vx:Phaser.Math.FloatBetween(-0.2,0.2), vy:Phaser.Math.FloatBetween(-0.3,-0.6), size:Phaser.Math.FloatBetween(0.5,2), alpha:Phaser.Math.FloatBetween(0.1,0.4) });
   }
 
   playStartupSound() {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const o = ctx.createOscillator(), g = ctx.createGain();
-      o.type='sawtooth'; o.frequency.setValueAtTime(55,ctx.currentTime); o.frequency.exponentialRampToValueAtTime(110,ctx.currentTime+0.8);
-      g.gain.setValueAtTime(0.06,ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.2);
-      o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime); o.stop(ctx.currentTime+1.2);
-      const o2 = ctx.createOscillator(), g2 = ctx.createGain();
-      o2.type='square'; o2.frequency.setValueAtTime(880,ctx.currentTime+0.3); o2.frequency.setValueAtTime(660,ctx.currentTime+0.5); o2.frequency.setValueAtTime(1320,ctx.currentTime+0.7);
-      g2.gain.setValueAtTime(0.05,ctx.currentTime+0.3); g2.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.0);
-      o2.connect(g2); g2.connect(ctx.destination); o2.start(ctx.currentTime+0.3); o2.stop(ctx.currentTime+1.0);
+      const o=ctx.createOscillator(),g=ctx.createGain(); o.type='sawtooth'; o.frequency.setValueAtTime(55,ctx.currentTime); o.frequency.exponentialRampToValueAtTime(110,ctx.currentTime+0.8); g.gain.setValueAtTime(0.06,ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.2); o.connect(g);g.connect(ctx.destination);o.start(ctx.currentTime);o.stop(ctx.currentTime+1.2);
+      const o2=ctx.createOscillator(),g2=ctx.createGain(); o2.type='square'; o2.frequency.setValueAtTime(880,ctx.currentTime+0.3); o2.frequency.setValueAtTime(660,ctx.currentTime+0.5); o2.frequency.setValueAtTime(1320,ctx.currentTime+0.7); g2.gain.setValueAtTime(0.05,ctx.currentTime+0.3); g2.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.0); o2.connect(g2);g2.connect(ctx.destination);o2.start(ctx.currentTime+0.3);o2.stop(ctx.currentTime+1.0);
     } catch(e) {}
   }
 
+  // ── GAME START ─────────────────────────────────────────────────────────
   startGame() {
     this.mode = 'game';
     this.gameOver = false;
     this.score = 0;
     this.moveDir = 0;
     this.highestY = Infinity;
-    const W = GAME_W, H = GAME_H;
+    this.enemies = [];
+    this.trailPositions = [];
+    this.lastMilestone = 0;
+    const W = GW, H = GH;
 
-    // Debug: big visible text
-    this.add.text(W/2, 200, 'GAME ACTIVE', {
-      fontSize: '32px', fontFamily: 'Courier New', fontStyle: 'bold', color: '#ff0044'
-    }).setOrigin(0.5).setDepth(200);
-
-    // Show game elements
     this.player.visible = true;
     this.player.setPosition(W/2, 80);
     this.player.body.setAllowGravity(true);
     this.player.body.setVelocity(0, 0);
     this.player.clearTint();
     this.player.setDepth(10);
+    this.player.squashTween = 1;
+    this.player.alpha = 1;
+
     this.platformGroup.visible = true;
     this.platformGroup.clear(true, true);
     this.landParticles.visible = true;
 
-    this.cameras.main.setBackgroundColor('#05050a');
+    this.cameras.main.setScroll(0, 0);
+    this.cameras.main.startFollow(this.player, false, 0.08, 0.08);
 
-    // First platform under player
+    // First platform
     this.platformGroup.create(W/2, 160, 'platform').refreshBody();
 
     // Generate platforms upward
     let y = 140;
     for (let i = 0; i < 25; i++) {
-      y -= PLATFORM_SPACING;
-      const x = Phaser.Math.Between(50, W - 50);
-      this.platformGroup.create(x, y, 'platform').refreshBody();
+      y -= PS.PLATFORM_SPACING;
+      this.platformGroup.create(Phaser.Math.Between(50, W-50), y, 'platform').refreshBody();
     }
     this.lastPlatformKey = y;
 
-    // Camera follow
-    this.cameras.main.startFollow(this.player, false, 0.1, 0.1);
-
-    // Show HUD
     document.getElementById('ui-overlay').style.display = 'none';
     document.getElementById('game-hud').style.display = 'block';
     document.getElementById('hudHeight').textContent = 'HEIGHT: 0m';
     document.getElementById('hudLayer').textContent = 'SHELL';
     document.getElementById('hudLayer').style.color = '#444';
-
-    // Small delay so physics settles
-    this.time.delayedCall(100, () => {
-      // Player should now be falling onto the platform
-    });
   }
 
+  // ── COLLISION ──────────────────────────────────────────────────────────
   onLand(player, platform) {
     if (this.gameOver || this.mode !== 'game') return;
-    player.body.setVelocityY(BOUNCE_VEL);
+    player.body.setVelocityY(PS.BOUNCE);
+
+    // Squash & stretch
+    this.player.squashTween = -0.3;
+    this.player.landedTime = this.animTime;
+
+    // Particles burst (upward)
     this.landParticles.emitParticleAt(player.x, player.y + 12);
 
-    this.highestY = Math.min(this.highestY || 0, player.y);
-    this.score = Math.floor(-(this.highestY || player.y) / 10);
+    // Camera shake
+    this.cameras.main.shake(80, 0.004);
+
+    // Score
+    this.score = Math.floor(-Math.min(this.highestY, player.y) / 10);
     document.getElementById('hudHeight').textContent = 'HEIGHT: ' + this.score + 'm';
 
-    // Update layer
+    // Layer
     for (const layer of LAYERS) {
       if (this.score >= layer.min) {
         document.getElementById('hudLayer').textContent = layer.name;
         document.getElementById('hudLayer').style.color = layer.color;
       }
     }
+
+    // Milestone popup
+    const milestone = Math.floor(this.score / 100) * 100;
+    if (milestone > 0 && milestone !== this.lastMilestone) {
+      this.lastMilestone = milestone;
+      this.showMilestone('+' + milestone + 'm');
+    }
   }
 
+  showMilestone(text) {
+    const el = document.getElementById('hudMilestone');
+    el.textContent = text;
+    el.style.color = '#00ff41';
+    el.style.opacity = 1;
+    el.style.transform = 'translate(-50%,-50%) scale(0.5)';
+    el.style.transition = 'none';
+    requestAnimationFrame(() => {
+      el.style.transition = 'all 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.2)';
+      el.style.opacity = '0';
+      el.style.transform = 'translate(-50%,-80%) scale(1.2)';
+    });
+  }
+
+  // ── ENEMIES ────────────────────────────────────────────────────────────
+  spawnEnemy(y, type) {
+    const W = GW;
+    const texKey = 'enemy_' + type;
+    const x = Phaser.Math.Between(60, W-60);
+    const enemy = this.physics.add.sprite(x, y, texKey);
+    enemy.setDepth(8);
+    enemy.body.setAllowGravity(false);
+    enemy.enemyType = type;
+    enemy.startX = x;
+    enemy.startY = y;
+    enemy.phase = Math.random() * Math.PI * 2;
+    enemy.speed = type === 'firewall' ? 60 : type === 'bot' ? 80 : 40;
+    enemy.range = type === 'firewall' ? 60 : type === 'bot' ? 100 : 40;
+
+    this.physics.add.overlap(this.player, enemy, this.onEnemyHit, null, this);
+    this.enemies.push(enemy);
+  }
+
+  onEnemyHit(player, enemy) {
+    if (this.gameOver) return;
+
+    // Kill enemy, player bounces up
+    enemy.destroy();
+    player.body.setVelocityY(PS.BOUNCE * 0.7);
+
+    // Explosion particles
+    for (let i = 0; i < 6; i++) {
+      this.landParticles.emitParticleAt(enemy.x, enemy.y);
+    }
+    this.cameras.main.shake(120, 0.008);
+  }
+
+  // ── GAME OVER ──────────────────────────────────────────────────────────
   endGame() {
     this.gameOver = true;
     this.player.body.setVelocity(0, 0);
-    this.player.setTint(0xff0044);
     this.player.body.setAllowGravity(false);
+    this.tweenPlayerDeath();
 
-    const W = GAME_W, H = GAME_H;
+    const W = GW, H = GH;
+    const scrollY = this.cameras.main.scrollY;
 
-    this.add.rectangle(W/2, H/2 - this.cameras.main.scrollY, W, H, 0x000000, 0.7).setDepth(200);
-    this.add.text(W/2, H/2 - 60 - this.cameras.main.scrollY, 'SYSTEM FAILURE', {
-      fontSize: '28px', fontFamily: 'Courier New, monospace', fontStyle: 'bold', color: '#ff0044'
+    this.add.rectangle(W/2, H/2 - scrollY, W, H, 0x000000, 0.75).setDepth(200);
+    this.add.text(W/2, H/2 - 70 - scrollY, 'SYSTEM FAILURE', {
+      fontSize:'30px', fontFamily:'Courier New, monospace', fontStyle:'bold', color:'#ff0044',
+      stroke:'#000', strokeThickness:3
     }).setOrigin(0.5).setDepth(201);
-    this.add.text(W/2, H/2 - this.cameras.main.scrollY, 'HEIGHT: ' + this.score + 'm', {
-      fontSize: '18px', fontFamily: 'Courier New, monospace', color: '#00ff41'
+    this.add.text(W/2, H/2 - 20 - scrollY, 'HEIGHT: ' + this.score + 'm', {
+      fontSize:'20px', fontFamily:'Courier New, monospace', fontStyle:'bold', color:'#00ff41'
     }).setOrigin(0.5).setDepth(201);
-    this.add.text(W/2, H/2 + 60 - this.cameras.main.scrollY, '>  RESTART  <', {
-      fontSize: '16px', fontFamily: 'Courier New, monospace', fontStyle: 'bold', color: '#00ff41'
-    }).setOrigin(0.5).setDepth(201).setInteractive({ useHandCursor: true }).on('pointerdown', () => {
-      location.reload();
-    });
+    this.add.text(W/2, H/2 + 40 - scrollY, '>  RESTART  <', {
+      fontSize:'18px', fontFamily:'Courier New, monospace', fontStyle:'bold', color:'#00ff41'
+    }).setOrigin(0.5).setDepth(201).setInteractive({ useHandCursor: true }).on('pointerdown', () => location.reload());
 
     this.input.keyboard.once('keydown-SPACE', () => location.reload());
     this.input.keyboard.once('keydown-ENTER', () => location.reload());
   }
 
-  update(time, delta) {
-    const W = GAME_W, H = GAME_H;
-    const dt = delta / 16;
+  tweenPlayerDeath() {
+    this.tweens.add({ targets: this.player, alpha: 0, duration: 800, ease: 'Power2' });
+    this.tweens.add({ targets: this.player, angle: 180, duration: 600, ease: 'Power2' });
+  }
 
-    // ── Menu background effects (always run) ──
+  // ── UPDATE ─────────────────────────────────────────────────────────────
+  update(time, delta) {
+    const W = GW, H = GH;
+    const dt = delta / 16;
+    this.animTime += dt * 0.06;
+
+    // ── MENU BACKGROUND ──
     this.gridOffset += 0.3 * dt;
     this.gridGfx.clear();
     const sp = 40;
     this.gridGfx.lineStyle(0.5, 0x003300, 0.2);
-    for (let x = 0; x < W; x += sp) { this.gridGfx.beginPath(); this.gridGfx.moveTo(x, 0); this.gridGfx.lineTo(x, H); this.gridGfx.strokePath(); }
-    for (let y = -sp + (this.gridOffset % sp); y < H; y += sp) { this.gridGfx.beginPath(); this.gridGfx.moveTo(0, y); this.gridGfx.lineTo(W, y); this.gridGfx.strokePath(); }
-    this.gridGfx.fillStyle(0x00ff41, 0.1);
-    for (let x = 0; x < W; x += sp) for (let y = -sp + (this.gridOffset % sp); y < H; y += sp) this.gridGfx.fillRect(x - 1, y - 1, 2, 2);
+    for (let x = 0; x < W; x += sp) { this.gridGfx.beginPath(); this.gridGfx.moveTo(x,0); this.gridGfx.lineTo(x,H); this.gridGfx.strokePath(); }
+    for (let y = -sp + (this.gridOffset%sp); y < H; y += sp) { this.gridGfx.beginPath(); this.gridGfx.moveTo(0,y); this.gridGfx.lineTo(W,y); this.gridGfx.strokePath(); }
+    this.gridGfx.fillStyle(0x00ff41,0.1);
+    for (let x = 0; x < W; x += sp) for (let y = -sp + (this.gridOffset%sp); y < H; y += sp) this.gridGfx.fillRect(x-1,y-1,2,2);
 
-    // Rain (menu only)
     if (this.mode === 'menu') {
-      this.rainGfx.visible = true;
-      this.rainGfx.clear();
-      for (const drop of this.rainDrops) {
-        drop.y += drop.speed * dt;
-        if (drop.y > H + 20) { drop.y = -drop.length * 14; drop.x = Phaser.Math.Between(0, W); }
-        const a = Phaser.Math.Clamp(1 - (drop.y / H), 0.05, 0.3);
-        this.rainGfx.fillStyle(0x00ff41, a * 0.7); this.rainGfx.fillRect(drop.x - 2, drop.y - 5, 4, 5);
-        this.rainGfx.fillStyle(0x00ff41, a * 0.05); this.rainGfx.fillRect(drop.x - 0.5, drop.y, 1, drop.length * 12);
+      this.rainGfx.visible = true; this.rainGfx.clear();
+      for (const d of this.rainDrops) {
+        d.y += d.speed * dt;
+        if (d.y > H+20) { d.y = -d.length*14; d.x = Phaser.Math.Between(0,W); }
+        const a = Phaser.Math.Clamp(1-(d.y/H),0.05,0.3);
+        this.rainGfx.fillStyle(0x00ff41,a*0.7); this.rainGfx.fillRect(d.x-2,d.y-5,4,5);
+        this.rainGfx.fillStyle(0x00ff41,a*0.05); this.rainGfx.fillRect(d.x-0.5,d.y,1,d.length*12);
       }
-      // Particles
       for (const p of this.menuParticles) {
-        p.x += p.vx * dt; p.y += p.vy * dt;
-        if (p.y < -10) { p.y = H + 10; p.x = Phaser.Math.Between(0, W); }
-        if (p.x < -10 || p.x > W + 10) p.vx *= -1;
-        this.rainGfx.fillStyle(0x00ff41, p.alpha); this.rainGfx.fillCircle(p.x, p.y, p.size);
+        p.x += p.vx*dt; p.y += p.vy*dt;
+        if (p.y < -10) { p.y = H+10; p.x = Phaser.Math.Between(0,W); }
+        if (p.x < -10 || p.x > W+10) p.vx *= -1;
+        this.rainGfx.fillStyle(0x00ff41,p.alpha); this.rainGfx.fillCircle(p.x,p.y,p.size);
       }
     } else {
       this.rainGfx.visible = false;
     }
 
-    // ── GAME UPDATE ──
     if (this.mode !== 'game' || this.gameOver) return;
 
+    // ── GAME LOGIC ──
     const body = this.player.body;
 
-    // Movement
+    // Input
     let mx = 0;
     if (this.cursors.left.isDown) mx = -1;
     else if (this.cursors.right.isDown) mx = 1;
     else if (this.moveDir !== 0) mx = this.moveDir;
-    body.setVelocityX(mx * MOVE_SPEED);
+    body.setVelocityX(mx * PS.SPEED);
 
-    // Wrap horizontal
+    // Wrap
     if (this.player.x < -10) this.player.x = W + 10;
     else if (this.player.x > W + 10) this.player.x = -10;
 
-    // Generate platforms ahead
+    // Generate platforms
     if (this.player.y < this.lastPlatformKey + 1500) {
       let y = this.lastPlatformKey;
       for (let i = 0; i < 10; i++) {
-        y -= PLATFORM_SPACING;
-        this.platformGroup.create(Phaser.Math.Between(50, W - 50), y, 'platform').refreshBody();
+        y -= PS.PLATFORM_SPACING;
+        this.platformGroup.create(Phaser.Math.Between(50,W-50), y, 'platform').refreshBody();
       }
       this.lastPlatformKey = y;
     }
 
     // Remove far platforms
-    this.platformGroup.children.each((p) => {
-      if (p.y > this.player.y + H + 200) p.destroy();
-    });
+    this.platformGroup.children.each((p) => { if (p.y > this.player.y + H + 200) p.destroy(); });
 
-    // Game over check
+    // Game over
     if (this.player.y > H + 150) this.endGame();
 
-    // Player tilt
-    this.player.rotation = Phaser.Math.Clamp(body.velocity.x * 0.003, -0.3, 0.3);
-
-    // Track highest Y for score
-    if (this.player.y < (this.highestY || 0)) {
+    // Track height
+    if (this.player.y < this.highestY) {
       this.highestY = this.player.y;
       this.score = Math.floor(-this.highestY / 10);
       document.getElementById('hudHeight').textContent = 'HEIGHT: ' + this.score + 'm';
+
+      // Spawn enemies at height intervals
+      if (this.score > 200 && this.score % 50 < 3 && Math.random() < 0.02) {
+        const types = ['firewall', 'virus', 'bot'];
+        this.spawnEnemy(this.player.y - GH, types[Math.floor(Math.random()*3)]);
+      }
+
       for (const layer of LAYERS) {
         if (this.score >= layer.min) {
           document.getElementById('hudLayer').textContent = layer.name;
@@ -445,39 +518,110 @@ class BootScene extends Phaser.Scene {
       }
     }
 
-    // Background grid (game parallax)
+    // ── SQUASH & STRETCH ──
+    const dt2 = this.animTime - this.player.landedTime;
+    if (this.player.squashTween < 0) {
+      this.player.squashTween += 0.04 * dt;
+      if (this.player.squashTween >= 0) this.player.squashTween = 0.15;
+    } else if (this.player.squashTween > 0) {
+      this.player.squashTween -= 0.015 * dt;
+      if (this.player.squashTween < 0) this.player.squashTween = 0;
+    }
+    const sx = 1 + this.player.squashTween * 1.8;
+    const sy = 1 - this.player.squashTween * 1.2;
+    this.player.setScale(sx, sy);
+
+    // Tilt based on velocity
+    this.player.rotation = Phaser.Math.Clamp(body.velocity.x * 0.003, -0.3, 0.3);
+
+    // ── PLAYER ANIMATION (cape + aura overlay) ──
+    this.playerOverlay.clear();
+    this.drawPlayerTo(this.playerOverlay, this.player.x - 24, this.player.y - 24, this.animTime + this.animTime * 0.2);
+
+    // ── TRAIL ──
+    this.trailGfx.clear();
+    if (Math.abs(body.velocity.y) > 200) {
+      this.trailPositions.unshift({ x: this.player.x, y: this.player.y, a: 1 });
+      if (this.trailPositions.length > 8) this.trailPositions.pop();
+      for (let i = 0; i < this.trailPositions.length; i++) {
+        const t = this.trailPositions[i];
+        t.a -= 0.04 * dt;
+        if (t.a > 0) {
+          this.trailGfx.fillStyle(0x00ff41, t.a * 0.15);
+          this.trailGfx.fillCircle(t.x, t.y, 10 - i);
+        }
+      }
+    } else {
+      this.trailPositions = [];
+    }
+
+    // ── SPEED LINES ──
+    this.speedLineGfx.clear();
+    if (body.velocity.y > 300) {
+      const intensity = Phaser.Math.Clamp((body.velocity.y - 300) / 500, 0, 1);
+      this.speedLineGfx.lineStyle(1, 0x00ff41, 0.1 * intensity);
+      for (let i = 0; i < 5; i++) {
+        const lx = Phaser.Math.Between(0, W);
+        const ly = Phaser.Math.Between(0, H) + this.cameras.main.scrollY;
+        const len = Phaser.Math.Between(15, 40);
+        this.speedLineGfx.beginPath();
+        this.speedLineGfx.moveTo(lx, ly);
+        this.speedLineGfx.lineTo(lx, ly + len);
+        this.speedLineGfx.strokePath();
+      }
+    }
+
+    // ── ENEMIES ──
+    for (let i = this.enemies.length - 1; i >= 0; i--) {
+      const e = this.enemies[i];
+      if (!e.active) { this.enemies.splice(i, 1); continue; }
+      if (e.y > this.player.y + H + 100) { e.destroy(); this.enemies.splice(i, 1); continue; }
+
+      e.phase += 0.03 * dt;
+      if (e.enemyType === 'firewall') {
+        e.x = e.startX + Math.sin(e.phase) * e.range;
+        e.rotation += 0.05 * dt;
+      } else if (e.enemyType === 'bot') {
+        e.x = e.startX + Math.sin(e.phase * 0.7) * e.range;
+        e.y = e.startY + Math.sin(e.phase * 1.2) * 20;
+        e.rotation = Math.sin(e.phase) * 0.3;
+      } else {
+        e.x = e.startX + Math.sin(e.phase * 0.5) * 30;
+        e.y = e.startY + Math.sin(e.phase * 0.8) * 15;
+        e.setScale(1 + 0.15 * Math.sin(e.phase * 2));
+      }
+      e.body.updateFromGameObject();
+    }
+
+    // ── BACKGROUND GRID (parallax) ──
     const camY = this.cameras.main.scrollY;
     this.bgGfx.clear();
     this.bgGfx.lineStyle(0.5, 0x003300, 0.12);
-    for (let x = 0; x < W; x += sp) { this.bgGfx.beginPath(); this.bgGfx.moveTo(x, camY); this.bgGfx.lineTo(x, camY + H); this.bgGfx.strokePath(); }
-    for (let y = Math.floor(camY / sp) * sp; y < camY + H; y += sp) { this.bgGfx.beginPath(); this.bgGfx.moveTo(0, y); this.bgGfx.lineTo(W, y); this.bgGfx.strokePath(); }
+    for (let x = 0; x < W; x += sp) { this.bgGfx.beginPath(); this.bgGfx.moveTo(x,camY); this.bgGfx.lineTo(x,camY+H); this.bgGfx.strokePath(); }
+    for (let y = Math.floor(camY/sp)*sp; y < camY+H; y += sp) { this.bgGfx.beginPath(); this.bgGfx.moveTo(0,y); this.bgGfx.lineTo(W,y); this.bgGfx.strokePath(); }
   }
 }
 
 // ─── PHASER CONFIG ─────────────────────────────────────────────────────────
 const config = {
-  type: Phaser.CANVAS, // Force Canvas to avoid WebGL issues
+  type: Phaser.CANVAS,
   parent: 'game-container',
-  width: GAME_W, height: GAME_H,
+  width: GW, height: GH,
   backgroundColor: '#0a0a14',
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-  physics: { default: 'arcade', arcade: { gravity: { y: GRAVITY }, debug: false } },
+  physics: { default: 'arcade', arcade: { gravity: { y: PS.GRAVITY }, debug: false } },
   scene: [BootScene]
 };
-
 const game = new Phaser.Game(config);
 
-// ─── UI EVENTS (HTML overlay → Phaser bridge) ─────────────────────────────
+// ─── UI EVENTS ─────────────────────────────────────────────────────────────
 document.getElementById('btnStart').addEventListener('click', function() {
   if (this.classList.contains('clicked')) return;
   this.classList.add('clicked');
   document.getElementById('glitchOverlay').classList.add('active');
   setTimeout(() => document.getElementById('glitchOverlay').classList.remove('active'), 400);
-
-  // Flash camera
   const scene = game.scene.getScene('BootScene');
   if (scene) scene.cameras.main.flash(300, 0, 255, 65);
-
   setTimeout(() => {
     const s = game.scene.getScene('BootScene');
     if (s) s.startGame();
