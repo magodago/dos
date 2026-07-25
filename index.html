@@ -15,157 +15,50 @@
     padding-top: 12vh;
   }
   #ui-overlay * { pointer-events: auto; }
-
-  /* ── TÍTULO PRINCIPAL: neon hueco ── */
   .title-main {
-    font-size: clamp(48px, 14vw, 120px);
-    font-weight: 900;
-    letter-spacing: 6px;
-    color: transparent;
-    -webkit-text-stroke: 3px #00ff41;
-    text-shadow:
-      0 0 10px rgba(0, 255, 65, 0.8),
-      0 0 25px rgba(0, 255, 65, 0.5),
-      0 0 50px rgba(0, 255, 65, 0.3),
-      0 0 100px rgba(0, 255, 65, 0.15);
-    opacity: 0;
-    animation: titleGlow 3s ease-out forwards;
-    animation-delay: 0.5s;
+    font-size: clamp(48px, 14vw, 120px); font-weight: 900; letter-spacing: 6px;
+    color: transparent; -webkit-text-stroke: 3px #00ff41;
+    text-shadow: 0 0 10px rgba(0,255,65,0.8), 0 0 25px rgba(0,255,65,0.5), 0 0 50px rgba(0,255,65,0.3), 0 0 100px rgba(0,255,65,0.15);
+    opacity: 0; animation: titleGlow 3s ease-out forwards; animation-delay: 0.5s;
   }
-  @keyframes titleGlow {
-    0% { opacity: 0; transform: scale(0.8); filter: blur(8px); }
-    60% { opacity: 1; transform: scale(1.05); filter: blur(0); }
-    100% { opacity: 1; transform: scale(1); filter: blur(0); }
-  }
-
-  /* ── SUBTÍTULO BRILLANTE ── */
+  @keyframes titleGlow { 0% { opacity:0; transform:scale(0.8); filter:blur(8px); } 60% { opacity:1; transform:scale(1.05); filter:blur(0); } 100% { opacity:1; transform:scale(1); filter:blur(0); } }
   .title-sub {
-    font-size: clamp(11px, 2.5vw, 20px);
-    font-weight: 700;
-    letter-spacing: 8px;
-    color: #ffffff;
-    text-shadow:
-      0 0 5px #00ff41,
-      0 0 15px #00ff41,
-      0 0 30px rgba(0, 255, 65, 0.7),
-      0 0 60px rgba(0, 255, 65, 0.4);
-    margin-top: 0.5vh;
-    opacity: 0;
-    animation: subFade 1.5s ease-out forwards;
-    animation-delay: 1.8s;
+    font-size: clamp(11px, 2.5vw, 20px); font-weight: 700; letter-spacing: 8px;
+    color: #fff; text-shadow: 0 0 5px #00ff41, 0 0 15px #00ff41, 0 0 30px rgba(0,255,65,0.7), 0 0 60px rgba(0,255,65,0.4);
+    margin-top: 0.5vh; opacity: 0; animation: subFade 1.5s ease-out forwards; animation-delay: 1.8s;
   }
-  @keyframes subFade {
-    0% { opacity: 0; transform: translateY(10px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── TAGLINE ── */
+  @keyframes subFade { 0% { opacity:0; transform:translateY(10px); } 100% { opacity:1; transform:translateY(0); } }
   .title-tag {
-    font-size: clamp(9px, 1.6vw, 14px);
-    font-weight: 700;
-    color: #ff1744;
-    letter-spacing: 4px;
-    margin-top: 1.5vh;
-    text-shadow:
-      0 0 5px #ff1744,
-      0 0 15px rgba(255, 23, 68, 0.7),
-      0 0 30px rgba(255, 23, 68, 0.4),
-      0 0 60px rgba(255, 23, 68, 0.2);
-    opacity: 0;
-    animation: tagFade 1.2s ease-out forwards;
-    animation-delay: 2.8s;
+    font-size: clamp(9px, 1.6vw, 14px); font-weight: 700; color: #ff1744; letter-spacing: 4px; margin-top: 1.5vh;
+    text-shadow: 0 0 5px #ff1744, 0 0 15px rgba(255,23,68,0.7), 0 0 30px rgba(255,23,68,0.4), 0 0 60px rgba(255,23,68,0.2);
+    opacity: 0; animation: tagFade 1.2s ease-out forwards; animation-delay: 2.8s;
   }
-  @keyframes tagFade {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-  }
-
-  /* ── BOTÓN START ── */
+  @keyframes tagFade { 0% { opacity:0; } 100% { opacity:1; } }
   .btn-start {
-    margin-top: 10vh;
-    padding: 14px 40px;
-    background: transparent;
-    border: 1px solid rgba(0, 255, 65, 0.4);
-    border-radius: 4px;
-    color: #00ff41;
-    font-family: 'Courier New', monospace;
-    font-size: clamp(14px, 2.2vw, 22px);
-    font-weight: 700;
-    cursor: pointer;
-    pointer-events: auto;
-    opacity: 0;
-    animation: btnFade 1s ease-out forwards;
-    animation-delay: 3.8s;
-    transition: all 0.3s ease;
-    text-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
-    letter-spacing: 3px;
-    position: relative;
-    overflow: hidden;
+    margin-top: 10vh; padding: 14px 40px; background: transparent;
+    border: 1px solid rgba(0,255,65,0.4); border-radius: 4px; color: #00ff41;
+    font-family: 'Courier New', monospace; font-size: clamp(14px, 2.2vw, 22px); font-weight: 700;
+    cursor: pointer; pointer-events: auto; opacity: 0;
+    animation: btnFade 1s ease-out forwards; animation-delay: 3.8s;
+    transition: all 0.3s ease; text-shadow: 0 0 10px rgba(0,255,65,0.3); letter-spacing: 3px;
   }
-  @keyframes btnFade {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
-  .btn-start:hover {
-    border-color: #00ff41;
-    box-shadow: 0 0 20px rgba(0, 255, 65, 0.3), inset 0 0 20px rgba(0, 255, 65, 0.1);
-    color: #ffffff;
-  }
-  .btn-start .cursor {
-    animation: blink 1s step-end infinite;
-  }
-  @keyframes blink {
-    50% { opacity: 0; }
-  }
-  .btn-start.clicked {
-    animation: btnGlitchOut 0.8s ease-out forwards;
-  }
-  @keyframes btnGlitchOut {
-    0% { opacity: 1; transform: scale(1); }
-    20% { opacity: 1; transform: translateX(-5px) scale(1.02); filter: hue-rotate(90deg); }
-    40% { opacity: 0.8; transform: translateX(5px); }
-    60% { opacity: 0.6; transform: scale(1.1); filter: brightness(2); }
-    100% { opacity: 0; transform: scale(2); filter: brightness(3); }
-  }
-
-  /* ── VERSIÓN ── */
-  .version {
-    position: absolute;
-    bottom: 15px;
-    right: 15px;
-    font-size: 10px;
-    color: #333;
-    font-family: 'Courier New', monospace;
-    opacity: 0;
-    animation: subFade 1s ease-out forwards;
-    animation-delay: 4s;
-  }
-
-  /* ── GLITCH OVERLAY ── */
-  .glitch-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 2;
-    pointer-events: none;
-    opacity: 0;
-  }
-  .glitch-overlay.active {
-    animation: glitchFlash 0.3s ease-out forwards;
-  }
-  @keyframes glitchFlash {
-    0% { opacity: 0; }
-    10% { opacity: 0.3; background: rgba(0, 255, 65, 0.15); }
-    20% { opacity: 0; }
-    30% { opacity: 0.2; background: rgba(255, 255, 255, 0.1); }
-    50% { opacity: 0; }
-    70% { opacity: 0.15; background: rgba(0, 255, 65, 0.1); }
-    100% { opacity: 0; }
-  }
+  @keyframes btnFade { 0% { opacity:0; transform:translateY(20px); } 100% { opacity:1; transform:translateY(0); } }
+  .btn-start:hover { border-color: #00ff41; box-shadow: 0 0 20px rgba(0,255,65,0.3), inset 0 0 20px rgba(0,255,65,0.1); color: #fff; }
+  .btn-start .cursor { animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity:0; } }
+  .btn-start.clicked { animation: btnGlitchOut 0.8s ease-out forwards; }
+  @keyframes btnGlitchOut { 0% { opacity:1; transform:scale(1); } 20% { opacity:1; transform:translateX(-5px) scale(1.02); filter:hue-rotate(90deg); } 40% { opacity:0.8; transform:translateX(5px); } 60% { opacity:0.6; transform:scale(1.1); filter:brightness(2); } 100% { opacity:0; transform:scale(2); filter:brightness(3); } }
+  .version { position: absolute; bottom: 15px; right: 15px; font-size: 10px; color: #333; font-family: 'Courier New', monospace; opacity: 0; animation: subFade 1s ease-out forwards; animation-delay: 4s; }
+  .glitch-overlay { position: fixed; top:0; left:0; width:100%; height:100%; z-index:2; pointer-events:none; opacity:0; }
+  .glitch-overlay.active { animation: glitchFlash 0.3s ease-out forwards; }
+  @keyframes glitchFlash { 0% { opacity:0; } 10% { opacity:0.3; background:rgba(0,255,65,0.15); } 20% { opacity:0; } 30% { opacity:0.2; background:rgba(255,255,255,0.1); } 50% { opacity:0; } 70% { opacity:0.15; background:rgba(0,255,65,0.1); } 100% { opacity:0; } }
+  #game-hud { display: none; position: absolute; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; }
+  #game-hud .hud-height { position: absolute; top: 15px; left: 15px; font-size: 14px; font-weight: bold; color: #00ff41; text-shadow: 0 0 5px rgba(0,255,65,0.5); }
+  #game-hud .hud-layer { position: absolute; top: 15px; right: 15px; font-size: 11px; color: #444; }
 </style>
 </head>
 <body>
 <div id="game-container"></div>
-
 <div id="ui-overlay">
   <div class="title-main">D.O.S</div>
   <div class="title-sub">DAVID OPERATION SYSTEM</div>
@@ -173,380 +66,225 @@
   <button class="btn-start" id="btnStart"><span>> </span>INITIALIZE<span class="cursor">_</span><span> <</span></button>
   <div class="version">v1.0 // BUILD 2026</div>
 </div>
-
+<div id="game-hud">
+  <div class="hud-height" id="hudHeight">HEIGHT: 0m</div>
+  <div class="hud-layer" id="hudLayer">SHELL</div>
+</div>
 <div class="glitch-overlay" id="glitchOverlay"></div>
-
 <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
 <script>
-// ─── SCENE: MENU BACKGROUND ────────────────────────────────────────────────
-class MenuBgScene extends Phaser.Scene {
-  constructor() { super('MenuBgScene'); }
+const GAME_W = Math.min(window.innerWidth, 800);
+const GAME_H = Math.min(window.innerHeight, 900);
+const PLATFORM_SPACING = 75;
+const GRAVITY = 900;
+const BOUNCE_VEL = -520;
+const MOVE_SPEED = 200;
+const WORLD_LIMIT = 20000;
+
+const LAYERS = [
+  { min: 0, name: 'SHELL', color: '#444', bg: '#05050a' },
+  { min: 500, name: 'KERNEL', color: '#00d4ff', bg: '#05050a' },
+  { min: 1500, name: 'FIREWALL', color: '#ff0044', bg: '#05050a' },
+  { min: 4000, name: 'MAINFRAME', color: '#aa00ff', bg: '#05050a' }
+];
+
+// ─── SINGLE BOOT SCENE ────────────────────────────────────────────────────
+class BootScene extends Phaser.Scene {
+  constructor() { super('BootScene'); }
 
   create() {
-    const W = this.cameras.main.width;
-    const H = this.cameras.main.height;
-
-    // ── Grid animado ──
-    this.gridGfx = this.add.graphics();
-    this.gridOffset = 0;
-
-    // ── Matrix rain ──
-    this.rainGfx = this.add.graphics().setDepth(1);
+    this.mode = 'menu'; // 'menu' | 'game'
+    this.gameOver = false;
+    this.score = 0;
+    this.moveDir = 0;
     this.rainDrops = [];
-    const rainCount = Math.min(50, Math.floor(W / 15));
-    for (let i = 0; i < rainCount; i++) {
-      this.rainDrops.push({
-        x: Phaser.Math.Between(0, W),
-        y: Phaser.Math.Between(-H, 0),
-        speed: Phaser.Math.Between(2, 5),
-        length: Phaser.Math.Between(5, 18)
-      });
-    }
+    this.menuParticles = [];
 
-    // ── Partículas neón ──
-    this.particles = [];
-    for (let i = 0; i < 30; i++) {
-      this.particles.push({
-        x: Phaser.Math.Between(0, W),
-        y: Phaser.Math.Between(0, H),
-        vx: Phaser.Math.FloatBetween(-0.2, 0.2),
-        vy: Phaser.Math.FloatBetween(-0.3, -0.6),
-        size: Phaser.Math.FloatBetween(0.5, 2),
-        alpha: Phaser.Math.FloatBetween(0.1, 0.4)
-      });
-    }
-    this.partGfx = this.add.graphics().setDepth(2);
+    this.setupMenu();
+    this.setupTextures();
+    this.setupGame();
+    this.setupBackground();
+    this.setupInput();
 
-    // ── Scanlines ──
-    this.scanGfx = this.add.graphics().setDepth(3);
-    this.scanGfx.fillStyle(0x000000, 0.03);
-    for (let y = 0; y < H; y += 3) {
-      this.scanGfx.fillRect(0, y, W, 1);
-    }
-
-    // ── Startup sound ──
+    // Menu-only: start background effects
+    this.startMenuEffects();
     this.playStartupSound();
+  }
+
+  setupTextures() {
+    // Player
+    const pg = this.make.graphics({ add: false });
+    pg.fillStyle(0x00ff41, 0.15); pg.fillCircle(24,24,24);
+    pg.fillStyle(0x00ff41, 0.3); pg.fillCircle(24,24,18);
+    pg.fillStyle(0x00ff41, 0.9); pg.fillCircle(24,24,12);
+    pg.fillStyle(0xe0ffe0, 1); pg.fillCircle(24,24,6);
+    pg.fillStyle(0x000000, 1); pg.fillCircle(19,22,2.5); pg.fillCircle(29,22,2.5);
+    pg.fillStyle(0xffffff, 1); pg.fillCircle(19,22,1); pg.fillCircle(29,22,1);
+    pg.generateTexture('player', 48, 48); pg.destroy();
+
+    // Platform
+    const plg = this.make.graphics({ add: false });
+    plg.fillStyle(0x0a1a0a, 1); plg.fillRoundedRect(0,0,80,16,3);
+    plg.lineStyle(1, 0x00ff41, 0.6); plg.strokeRoundedRect(0,0,80,16,3);
+    plg.lineStyle(0.5, 0x00ff41, 0.2); plg.beginPath(); plg.moveTo(2,2); plg.lineTo(78,2); plg.strokePath();
+    plg.generateTexture('platform', 80, 16); plg.destroy();
+
+    // Particle
+    const ptg = this.make.graphics({ add: false });
+    ptg.fillStyle(0x00ff41, 1); ptg.fillCircle(4,4,4);
+    ptg.generateTexture('particle', 8, 8); ptg.destroy();
+  }
+
+  setupMenu() {
+    this.menuContainer = this.add.container(0, 0).setDepth(100).setVisible(true);
+    this.menuGfx = this.add.graphics();
+    // No menu overlay objects needed in Phaser — HTML overlay handles it
+  }
+
+  setupGame() {
+    const W = GAME_W, H = GAME_H;
+    this.physics.world.setBounds(0, -WORLD_LIMIT, W, WORLD_LIMIT + H);
+    this.physics.world.gravity.y = 0;
+
+    this.platformGroup = this.physics.add.staticGroup();
+    this.platformGroup.visible = false;
+
+    this.player = this.physics.add.sprite(W/2, 60, 'player');
+    this.player.body.setCircle(12, 12, 8);
+    this.player.setCollideWorldBounds(false);
+    this.player.setBounce(0);
+    this.player.body.setAllowGravity(false);
+    this.player.setDepth(10);
+    this.player.visible = false;
+
+    this.cameras.main.startFollow(this.player, false, 0.1, 0.1);
+    this.cameras.main.setBounds(0, -WORLD_LIMIT, W, WORLD_LIMIT + H);
+
+    this.bgGfx = this.add.graphics().setDepth(-1);
+    this.landParticles = this.add.particles(0, 0, 'particle', {
+      speed: { min: 30, max: 80 }, angle: { min: 200, max: 340 },
+      scale: { start: 0.6, end: 0 }, lifespan: 500, quantity: 8,
+      tint: [0x00ff41, 0x00cc33, 0xffffff], emitting: false
+    }).setDepth(11);
+    this.landParticles.visible = false;
+
+    this.physics.add.collider(this.player, this.platformGroup, this.onLand, null, this);
+  }
+
+  setupBackground() {
+    const W = GAME_W, H = GAME_H;
+    this.gridGfx = this.add.graphics().setDepth(-2);
+    this.gridOffset = 0;
+    this.rainGfx = this.add.graphics().setDepth(-1);
+
+    // Scanlines (always visible)
+    this.scanGfx = this.add.graphics().setDepth(50);
+    this.scanGfx.fillStyle(0x000000, 0.03);
+    for (let y = 0; y < H; y += 3) this.scanGfx.fillRect(0, y, W, 1);
+  }
+
+  setupInput() {
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.input.on('pointerdown', (p) => {
+      if (this.mode === 'game' && !this.gameOver) this.moveDir = p.x < GAME_W/2 ? -1 : 1;
+    });
+    this.input.on('pointerup', () => { if (this.mode === 'game') this.moveDir = 0; });
+  }
+
+  startMenuEffects() {
+    const W = GAME_W, H = GAME_H;
+    for (let i = 0; i < 50; i++) {
+      this.rainDrops.push({
+        x: Phaser.Math.Between(0,W), y: Phaser.Math.Between(-H,0),
+        speed: Phaser.Math.Between(2,5), length: Phaser.Math.Between(5,18)
+      });
+    }
+    for (let i = 0; i < 30; i++) {
+      this.menuParticles.push({
+        x: Phaser.Math.Between(0,W), y: Phaser.Math.Between(0,H),
+        vx: Phaser.Math.FloatBetween(-0.2,0.2), vy: Phaser.Math.FloatBetween(-0.3,-0.6),
+        size: Phaser.Math.FloatBetween(0.5,2), alpha: Phaser.Math.FloatBetween(0.1,0.4)
+      });
+    }
   }
 
   playStartupSound() {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(55, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + 0.8);
-      gain.gain.setValueAtTime(0.06, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1.2);
-
-      const osc2 = ctx.createOscillator();
-      const gain2 = ctx.createGain();
-      osc2.type = 'square';
-      osc2.frequency.setValueAtTime(880, ctx.currentTime + 0.3);
-      osc2.frequency.setValueAtTime(660, ctx.currentTime + 0.5);
-      osc2.frequency.setValueAtTime(1320, ctx.currentTime + 0.7);
-      gain2.gain.setValueAtTime(0.05, ctx.currentTime + 0.3);
-      gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
-      osc2.connect(gain2); gain2.connect(ctx.destination);
-      osc2.start(ctx.currentTime + 0.3); osc2.stop(ctx.currentTime + 1.0);
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type='sawtooth'; o.frequency.setValueAtTime(55,ctx.currentTime); o.frequency.exponentialRampToValueAtTime(110,ctx.currentTime+0.8);
+      g.gain.setValueAtTime(0.06,ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.2);
+      o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime); o.stop(ctx.currentTime+1.2);
+      const o2 = ctx.createOscillator(), g2 = ctx.createGain();
+      o2.type='square'; o2.frequency.setValueAtTime(880,ctx.currentTime+0.3); o2.frequency.setValueAtTime(660,ctx.currentTime+0.5); o2.frequency.setValueAtTime(1320,ctx.currentTime+0.7);
+      g2.gain.setValueAtTime(0.05,ctx.currentTime+0.3); g2.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.0);
+      o2.connect(g2); g2.connect(ctx.destination); o2.start(ctx.currentTime+0.3); o2.stop(ctx.currentTime+1.0);
     } catch(e) {}
   }
 
-  update(time, delta) {
-    const W = this.cameras.main.width;
-    const H = this.cameras.main.height;
-    const dt = delta / 16;
-
-    // ── Grid ──
-    this.gridOffset += 0.3 * dt;
-    this.gridGfx.clear();
-    const sp = 40;
-    this.gridGfx.lineStyle(0.5, 0x003300, 0.25);
-    for (let x = 0; x < W; x += sp) {
-      this.gridGfx.beginPath(); this.gridGfx.moveTo(x, 0); this.gridGfx.lineTo(x, H); this.gridGfx.strokePath();
-    }
-    for (let y = -sp + (this.gridOffset % sp); y < H; y += sp) {
-      this.gridGfx.beginPath(); this.gridGfx.moveTo(0, y); this.gridGfx.lineTo(W, y); this.gridGfx.strokePath();
-    }
-    // Intersections
-    this.gridGfx.fillStyle(0x00ff41, 0.12);
-    for (let x = 0; x < W; x += sp)
-      for (let y = -sp + (this.gridOffset % sp); y < H; y += sp)
-        this.gridGfx.fillRect(x - 1, y - 1, 2, 2);
-
-    // ── Rain ──
-    this.rainGfx.clear();
-    for (const drop of this.rainDrops) {
-      drop.y += drop.speed * dt;
-      if (drop.y > H + 20) {
-        drop.y = -drop.length * 14;
-        drop.x = Phaser.Math.Between(0, W);
-      }
-      const alpha = Phaser.Math.Clamp(1 - (drop.y / H), 0.05, 0.3);
-      this.rainGfx.fillStyle(0x00ff41, alpha * 0.7);
-      this.rainGfx.fillRect(drop.x - 2, drop.y - 5, 4, 5);
-      this.rainGfx.fillStyle(0x00ff41, alpha * 0.05);
-      this.rainGfx.fillRect(drop.x - 0.5, drop.y, 1, drop.length * 12);
-    }
-
-    // ── Particles ──
-    this.partGfx.clear();
-    for (const p of this.particles) {
-      p.x += p.vx * dt;
-      p.y += p.vy * dt;
-      if (p.y < -10) { p.y = H + 10; p.x = Phaser.Math.Between(0, W); }
-      if (p.x < -10 || p.x > W + 10) p.vx *= -1;
-      this.partGfx.fillStyle(0x00ff41, p.alpha);
-      this.partGfx.fillCircle(p.x, p.y, p.size);
-    }
-  }
-}
-
-// ─── SCENE: GAME ──────────────────────────────────────────────────────────
-class GameScene extends Phaser.Scene {
-  constructor() { super('GameScene'); }
-
-  init() {
-    this.score = 0;
-    this.highestY = 0;
+  startGame() {
+    this.mode = 'game';
     this.gameOver = false;
-    this.platformGroup = null;
-    this.lastPlatformY = 0;
-    this.platformSpacing = 80;
-    this.moveDir = 0; // -1 left, 0 none, 1 right
-  }
+    this.score = 0;
+    this.moveDir = 0;
+    const W = GAME_W, H = GAME_H;
 
-  create() {
-    const W = this.cameras.main.width;
-    const H = this.cameras.main.height;
-    const BOUNDS_H = 10000; // How high the world goes
+    // Show game elements
+    this.player.visible = true;
+    this.player.setPosition(W/2, 80);
+    this.player.body.setAllowGravity(true);
+    this.player.body.setVelocity(0, 0);
+    this.player.clearTint();
+    this.player.setDepth(10);
+    this.platformGroup.visible = true;
+    this.platformGroup.clear(true, true);
+    this.landParticles.visible = true;
 
     this.cameras.main.setBackgroundColor('#05050a');
-    this.physics.world.setBounds(0, -BOUNDS_H, W, BOUNDS_H + H);
 
-    // ── Generate player texture ──
-    const playerGfx = this.make.graphics({ add: false });
-    // Outer glow
-    playerGfx.fillStyle(0x00ff41, 0.15);
-    playerGfx.fillCircle(24, 24, 24);
-    playerGfx.fillStyle(0x00ff41, 0.3);
-    playerGfx.fillCircle(24, 24, 18);
-    // Core
-    playerGfx.fillStyle(0x00ff41, 0.9);
-    playerGfx.fillCircle(24, 24, 12);
-    playerGfx.fillStyle(0xe0ffe0, 1);
-    playerGfx.fillCircle(24, 24, 6);
-    // Eyes
-    playerGfx.fillStyle(0x000000, 1);
-    playerGfx.fillCircle(19, 22, 2.5);
-    playerGfx.fillCircle(29, 22, 2.5);
-    playerGfx.fillStyle(0xffffff, 1);
-    playerGfx.fillCircle(19, 22, 1);
-    playerGfx.fillCircle(29, 22, 1);
-    playerGfx.generateTexture('player', 48, 48);
-    playerGfx.destroy();
+    // First platform under player
+    this.platformGroup.create(W/2, 160, 'platform').refreshBody();
 
-    // ── Platform texture ──
-    const platGfx = this.make.graphics({ add: false });
-    platGfx.fillStyle(0x0a1a0a, 1);
-    platGfx.fillRoundedRect(0, 0, 80, 16, 3);
-    platGfx.lineStyle(1, 0x00ff41, 0.6);
-    platGfx.strokeRoundedRect(0, 0, 80, 16, 3);
-    // Inner glow line
-    platGfx.lineStyle(0.5, 0x00ff41, 0.2);
-    platGfx.beginPath();
-    platGfx.moveTo(2, 2);
-    platGfx.lineTo(78, 2);
-    platGfx.strokePath();
-    platGfx.generateTexture('platform', 80, 16);
-    platGfx.destroy();
-
-    // ── Player ──
-    // Start near top of screen; first platform is below so player falls onto it
-    this.player = this.physics.add.sprite(W / 2, 60, 'player');
-    this.player.body.setCircle(12, 12, 8);
-    this.player.setCollideWorldBounds(false);
-    this.player.setBounce(0);
-    this.player.body.setGravityY(0);
-    this.player.body.setGravity(0, 800);
-    this.player.setDepth(10);
-
-    // ── Platforms ──
-    this.platformGroup = this.physics.add.staticGroup();
-
-    // FIRST platform: directly below the player so they land on it
-    this.platformGroup.create(W / 2, 140, 'platform').refreshBody();
-
-    // Generate platforms upward from above the first one
-    this.lastPlatformKey = 120;
-    this.generateInitialPlatforms();
-
-    // ── Collision ──
-    this.physics.add.collider(this.player, this.platformGroup, this.onLand, null, this);
-
-    // ── Controls ──
-    this.cursors = this.input.keyboard.createCursorKeys();
-
-    // Touch controls
-    this.input.on('pointerdown', (pointer) => {
-      if (this.gameOver) return;
-      this.moveDir = pointer.x < W / 2 ? -1 : 1;
-    });
-    this.input.on('pointerup', () => {
-      this.moveDir = 0;
-    });
-
-    // ── Camera ──
-    this.cameras.main.startFollow(this.player, false, 0.1, 0.1);
-    this.cameras.main.setBounds(0, -BOUNDS_H, W, BOUNDS_H + H);
-
-    // ── Background grid (parallax) ──
-    this.bgGfx = this.add.graphics().setDepth(-1);
-    this.bgOffset = 0;
-
-    // ── Score HUD ──
-    this.scoreText = this.add.text(15, 15, 'HEIGHT: 0m', {
-      fontSize: '14px', fontFamily: 'Courier New, monospace',
-      fontStyle: 'bold', color: '#00ff41',
-      stroke: '#000', strokeThickness: 2
-    }).setScrollFactor(0).setDepth(100);
-
-    // ── Particle texture ──
-    const partGfx = this.make.graphics({ add: false });
-    partGfx.fillStyle(0x00ff41, 1);
-    partGfx.fillCircle(4, 4, 4);
-    partGfx.generateTexture('particle', 8, 8);
-    partGfx.destroy();
-
-    // ── Particles for landing ──
-    this.landParticles = this.add.particles(0, 0, 'particle', {
-      speed: { min: 30, max: 80 },
-      angle: { min: 200, max: 340 },
-      scale: { start: 0.6, end: 0 },
-      lifespan: 500,
-      quantity: 8,
-      tint: [0x00ff41, 0x00cc33, 0xffffff],
-      emitting: false
-    });
-    this.landParticles.setDepth(11);
-
-    // ── Layer indicator ──
-    this.layerText = this.add.text(W - 15, 15, 'SHELL', {
-      fontSize: '11px', fontFamily: 'Courier New, monospace',
-      color: '#444', stroke: '#000', strokeThickness: 2
-    }).setOrigin(1, 0).setScrollFactor(0).setDepth(100);
-
-    // ── Platform spawner ──
-    this.spawnTimer = 0;
-  }
-
-  generateInitialPlatforms() {
-    const W = this.cameras.main.width;
-    let y = this.lastPlatformKey;
-
-    // Generate platforms upward from current position
-    for (let i = 0; i < 20; i++) {
-      const x = Phaser.Math.Between(40, W - 40);
-      y -= this.platformSpacing;
-      const plat = this.platformGroup.create(x, y, 'platform');
-      plat.refreshBody();
+    // Generate platforms upward
+    let y = 140;
+    for (let i = 0; i < 25; i++) {
+      y -= PLATFORM_SPACING;
+      const x = Phaser.Math.Between(50, W - 50);
+      this.platformGroup.create(x, y, 'platform').refreshBody();
     }
     this.lastPlatformKey = y;
+
+    // Camera follow
+    this.cameras.main.startFollow(this.player, false, 0.1, 0.1);
+
+    // Show HUD
+    document.getElementById('ui-overlay').style.display = 'none';
+    document.getElementById('game-hud').style.display = 'block';
+    document.getElementById('hudHeight').textContent = 'HEIGHT: 0m';
+    document.getElementById('hudLayer').textContent = 'SHELL';
+    document.getElementById('hudLayer').style.color = '#444';
+
+    // Small delay so physics settles
+    this.time.delayedCall(100, () => {
+      // Player should now be falling onto the platform
+    });
   }
 
   onLand(player, platform) {
-    if (this.gameOver) return;
-
-    // Bounce player up
-    player.body.setVelocityY(-550);
-
-    // Landing particles
+    if (this.gameOver || this.mode !== 'game') return;
+    player.body.setVelocityY(BOUNCE_VEL);
     this.landParticles.emitParticleAt(player.x, player.y + 12);
 
-    // Score: track height
-    this.highestY = Math.min(this.highestY, player.y);
-    this.score = Math.floor(-this.highestY / 10);
-    this.scoreText.setText('HEIGHT: ' + this.score + 'm');
+    this.highestY = Math.min(this.highestY || 0, player.y);
+    this.score = Math.floor(-(this.highestY || player.y) / 10);
+    document.getElementById('hudHeight').textContent = 'HEIGHT: ' + this.score + 'm';
 
-    // Layer indicator
-    const layers = [
-      { max: 0, name: 'SHELL', color: '#444' },
-      { max: 5000, name: 'KERNEL', color: '#00d4ff' },
-      { max: 15000, name: 'FIREWALL', color: '#ff0044' },
-      { max: 30000, name: 'MAINFRAME', color: '#aa00ff' }
-    ];
-    for (const layer of layers) {
-      if (this.score >= layer.max) {
-        this.layerText.setText(layer.name);
-        this.layerText.setColor(layer.color);
+    // Update layer
+    for (const layer of LAYERS) {
+      if (this.score >= layer.min) {
+        document.getElementById('hudLayer').textContent = layer.name;
+        document.getElementById('hudLayer').style.color = layer.color;
       }
-    }
-  }
-
-  update(time, delta) {
-    if (this.gameOver) return;
-
-    const W = this.cameras.main.width;
-    const H = this.cameras.main.height;
-    const body = this.player.body;
-
-    // ── Horizontal movement ──
-    let moveX = 0;
-    if (this.cursors.left.isDown) moveX = -1;
-    else if (this.cursors.right.isDown) moveX = 1;
-    else if (this.moveDir !== 0) moveX = this.moveDir;
-
-    body.setVelocityX(moveX * 200);
-
-    // Wrap around screen horizontally
-    if (this.player.x < -10) this.player.x = W + 10;
-    else if (this.player.x > W + 10) this.player.x = -10;
-
-    // ── Generate platforms ahead ──
-    const playerTop = this.player.y;
-    if (playerTop < this.lastPlatformKey + 2000) {
-      let y = this.lastPlatformKey;
-      for (let i = 0; i < 10; i++) {
-        const x = Phaser.Math.Between(40, W - 40);
-        y -= this.platformSpacing;
-        const plat = this.platformGroup.create(x, y, 'platform');
-        plat.refreshBody();
-      }
-      this.lastPlatformKey = y;
-    }
-
-    // ── Remove platforms far below ──
-    this.platformGroup.children.each((plat) => {
-      if (plat.y > this.player.y + H + 100) {
-        plat.destroy();
-      }
-    });
-
-    // ── Game over if fallen off screen ──
-    if (this.player.y > H + 100) {
-      this.endGame();
-    }
-
-    // ── Background grid ──
-    this.bgGfx.clear();
-    const sp = 40;
-    const camY = this.cameras.main.scrollY;
-    this.bgGfx.lineStyle(0.5, 0x003300, 0.15);
-    for (let x = 0; x < W; x += sp) {
-      this.bgGfx.beginPath(); this.bgGfx.moveTo(x, camY); this.bgGfx.lineTo(x, camY + H); this.bgGfx.strokePath();
-    }
-    for (let y = Math.floor(camY / sp) * sp; y < camY + H; y += sp) {
-      this.bgGfx.beginPath(); this.bgGfx.moveTo(0, y); this.bgGfx.lineTo(W, y); this.bgGfx.strokePath();
-    }
-
-    // ── Player tilt based on horizontal speed ──
-    this.player.rotation = Phaser.Math.Clamp(body.velocity.x * 0.003, -0.3, 0.3);
-
-    // ── Landing check particles ──
-    if (body.blocked.down) {
-      this.landParticles.emitting = false;
     }
   }
 
@@ -556,72 +294,147 @@ class GameScene extends Phaser.Scene {
     this.player.setTint(0xff0044);
     this.player.body.setAllowGravity(false);
 
-    const W = this.cameras.main.width;
-    const H = this.cameras.main.height;
+    const W = GAME_W, H = GAME_H;
 
-    this.add.rectangle(W/2, H/2, W, H, 0x000000, 0.7).setScrollFactor(0).setDepth(200);
-
-    this.add.text(W/2, H/2 - 60, 'SYSTEM FAILURE', {
-      fontSize: '28px', fontFamily: 'Courier New, monospace',
-      fontStyle: 'bold', color: '#ff0044'
-    }).setOrigin(0.5).setScrollFactor(0).setDepth(201);
-
-    this.add.text(W/2, H/2, 'HEIGHT: ' + this.score + 'm', {
-      fontSize: '18px', fontFamily: 'Courier New, monospace',
-      color: '#00ff41'
-    }).setOrigin(0.5).setScrollFactor(0).setDepth(201);
-
-    const restartBtn = this.add.text(W/2, H/2 + 60, '>  RESTART  <', {
-      fontSize: '16px', fontFamily: 'Courier New, monospace',
-      fontStyle: 'bold', color: '#00ff41'
-    }).setOrigin(0.5).setScrollFactor(0).setDepth(201).setInteractive({ useHandCursor: true });
-
-    restartBtn.on('pointerdown', () => {
+    this.add.rectangle(W/2, H/2 - this.cameras.main.scrollY, W, H, 0x000000, 0.7).setDepth(200);
+    this.add.text(W/2, H/2 - 60 - this.cameras.main.scrollY, 'SYSTEM FAILURE', {
+      fontSize: '28px', fontFamily: 'Courier New, monospace', fontStyle: 'bold', color: '#ff0044'
+    }).setOrigin(0.5).setDepth(201);
+    this.add.text(W/2, H/2 - this.cameras.main.scrollY, 'HEIGHT: ' + this.score + 'm', {
+      fontSize: '18px', fontFamily: 'Courier New, monospace', color: '#00ff41'
+    }).setOrigin(0.5).setDepth(201);
+    this.add.text(W/2, H/2 + 60 - this.cameras.main.scrollY, '>  RESTART  <', {
+      fontSize: '16px', fontFamily: 'Courier New, monospace', fontStyle: 'bold', color: '#00ff41'
+    }).setOrigin(0.5).setDepth(201).setInteractive({ useHandCursor: true }).on('pointerdown', () => {
       this.scene.restart();
     });
-    this.input.keyboard.once('keydown-SPACE', () => {
-      this.scene.restart();
+
+    this.input.keyboard.once('keydown-SPACE', () => this.scene.restart());
+    this.input.keyboard.once('keydown-ENTER', () => this.scene.restart());
+  }
+
+  update(time, delta) {
+    const W = GAME_W, H = GAME_H;
+    const dt = delta / 16;
+
+    // ── Menu background effects (always run) ──
+    this.gridOffset += 0.3 * dt;
+    this.gridGfx.clear();
+    const sp = 40;
+    this.gridGfx.lineStyle(0.5, 0x003300, 0.2);
+    for (let x = 0; x < W; x += sp) { this.gridGfx.beginPath(); this.gridGfx.moveTo(x, 0); this.gridGfx.lineTo(x, H); this.gridGfx.strokePath(); }
+    for (let y = -sp + (this.gridOffset % sp); y < H; y += sp) { this.gridGfx.beginPath(); this.gridGfx.moveTo(0, y); this.gridGfx.lineTo(W, y); this.gridGfx.strokePath(); }
+    this.gridGfx.fillStyle(0x00ff41, 0.1);
+    for (let x = 0; x < W; x += sp) for (let y = -sp + (this.gridOffset % sp); y < H; y += sp) this.gridGfx.fillRect(x - 1, y - 1, 2, 2);
+
+    // Rain (menu only)
+    if (this.mode === 'menu') {
+      this.rainGfx.visible = true;
+      this.rainGfx.clear();
+      for (const drop of this.rainDrops) {
+        drop.y += drop.speed * dt;
+        if (drop.y > H + 20) { drop.y = -drop.length * 14; drop.x = Phaser.Math.Between(0, W); }
+        const a = Phaser.Math.Clamp(1 - (drop.y / H), 0.05, 0.3);
+        this.rainGfx.fillStyle(0x00ff41, a * 0.7); this.rainGfx.fillRect(drop.x - 2, drop.y - 5, 4, 5);
+        this.rainGfx.fillStyle(0x00ff41, a * 0.05); this.rainGfx.fillRect(drop.x - 0.5, drop.y, 1, drop.length * 12);
+      }
+      // Particles
+      for (const p of this.menuParticles) {
+        p.x += p.vx * dt; p.y += p.vy * dt;
+        if (p.y < -10) { p.y = H + 10; p.x = Phaser.Math.Between(0, W); }
+        if (p.x < -10 || p.x > W + 10) p.vx *= -1;
+        this.rainGfx.fillStyle(0x00ff41, p.alpha); this.rainGfx.fillCircle(p.x, p.y, p.size);
+      }
+    } else {
+      this.rainGfx.visible = false;
+    }
+
+    // ── GAME UPDATE ──
+    if (this.mode !== 'game' || this.gameOver) return;
+
+    const body = this.player.body;
+
+    // Movement
+    let mx = 0;
+    if (this.cursors.left.isDown) mx = -1;
+    else if (this.cursors.right.isDown) mx = 1;
+    else if (this.moveDir !== 0) mx = this.moveDir;
+    body.setVelocityX(mx * MOVE_SPEED);
+
+    // Wrap horizontal
+    if (this.player.x < -10) this.player.x = W + 10;
+    else if (this.player.x > W + 10) this.player.x = -10;
+
+    // Generate platforms ahead
+    if (this.player.y < this.lastPlatformKey + 1500) {
+      let y = this.lastPlatformKey;
+      for (let i = 0; i < 10; i++) {
+        y -= PLATFORM_SPACING;
+        this.platformGroup.create(Phaser.Math.Between(50, W - 50), y, 'platform').refreshBody();
+      }
+      this.lastPlatformKey = y;
+    }
+
+    // Remove far platforms
+    this.platformGroup.children.each((p) => {
+      if (p.y > this.player.y + H + 200) p.destroy();
     });
-    this.input.keyboard.once('keydown-ENTER', () => {
-      this.scene.restart();
-    });
+
+    // Game over check
+    if (this.player.y > H + 150) this.endGame();
+
+    // Player tilt
+    this.player.rotation = Phaser.Math.Clamp(body.velocity.x * 0.003, -0.3, 0.3);
+
+    // Track highest Y for score
+    if (this.player.y < (this.highestY || 0)) {
+      this.highestY = this.player.y;
+      this.score = Math.floor(-this.highestY / 10);
+      document.getElementById('hudHeight').textContent = 'HEIGHT: ' + this.score + 'm';
+      for (const layer of LAYERS) {
+        if (this.score >= layer.min) {
+          document.getElementById('hudLayer').textContent = layer.name;
+          document.getElementById('hudLayer').style.color = layer.color;
+        }
+      }
+    }
+
+    // Background grid (game parallax)
+    const camY = this.cameras.main.scrollY;
+    this.bgGfx.clear();
+    this.bgGfx.lineStyle(0.5, 0x003300, 0.12);
+    for (let x = 0; x < W; x += sp) { this.bgGfx.beginPath(); this.bgGfx.moveTo(x, camY); this.bgGfx.lineTo(x, camY + H); this.bgGfx.strokePath(); }
+    for (let y = Math.floor(camY / sp) * sp; y < camY + H; y += sp) { this.bgGfx.beginPath(); this.bgGfx.moveTo(0, y); this.bgGfx.lineTo(W, y); this.bgGfx.strokePath(); }
   }
 }
 
-// ─── GAME CONFIG ───────────────────────────────────────────────────────────
+// ─── PHASER CONFIG ─────────────────────────────────────────────────────────
 const config = {
   type: Phaser.AUTO,
   parent: 'game-container',
-  width: Math.min(window.innerWidth, 800),
-  height: Math.min(window.innerHeight, 900),
+  width: GAME_W, height: GAME_H,
   backgroundColor: '#05050a',
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-  scene: [MenuBgScene, GameScene]
+  physics: { default: 'arcade', arcade: { gravity: { y: GRAVITY }, debug: false } },
+  scene: [BootScene]
 };
 
 const game = new Phaser.Game(config);
 
-// ─── UI EVENTS ─────────────────────────────────────────────────────────────
-const btn = document.getElementById('btnStart');
-const overlay = document.getElementById('glitchOverlay');
+// ─── UI EVENTS (HTML overlay → Phaser bridge) ─────────────────────────────
+document.getElementById('btnStart').addEventListener('click', function() {
+  if (this.classList.contains('clicked')) return;
+  this.classList.add('clicked');
+  document.getElementById('glitchOverlay').classList.add('active');
+  setTimeout(() => document.getElementById('glitchOverlay').classList.remove('active'), 400);
 
-btn.addEventListener('click', () => {
-  if (btn.classList.contains('clicked')) return;
-  btn.classList.add('clicked');
-
-  // Glitch flash overlay
-  overlay.classList.add('active');
-  setTimeout(() => overlay.classList.remove('active'), 400);
-
-  // Phaser camera flash
-  const scene = game.scene.getScene('MenuBgScene');
+  // Flash camera
+  const scene = game.scene.getScene('BootScene');
   if (scene) scene.cameras.main.flash(300, 0, 255, 65);
 
-  // Transition
   setTimeout(() => {
-    document.getElementById('ui-overlay').style.display = 'none';
-    game.scene.stop('MenuBgScene');
-    game.scene.start('GameScene');
+    const s = game.scene.getScene('BootScene');
+    if (s) s.startGame();
   }, 800);
 });
 </script>
