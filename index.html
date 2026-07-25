@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>D.O.S — David Operation System</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #05050a; }
+  #game-container { width: 100%; height: 100%; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<div id="game-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
+<script>
+// ─── SCENE: MENU PRINCIPAL ────────────────────────────────────────────────
+class MenuScene extends Phaser.Scene {
+  constructor() { super('MenuScene'); }
+
+  create() {
+    const W = this.cameras.main.width;
+    const H = this.cameras.main.height;
+
+    // ── Capa 1: Grid animado ──
+    this.gridGraphics = this.add.graphics();
+    this.gridOffset = 0;
+    this.gridSpeed = 0.3;
+
+    // ── Capa 2: Matrix rain (digital rain) ──
+    this.rainDrops = [];
+    const rainCount = Math.min(60, Math.floor(W / 12));
+    for (let i = 0; i < rainCount; i++) {
+      this.rainDrops.push({
+        x: Phaser.Math.Between(0, W),
+        y: Phaser.Math.Between(-H, 0),
+        speed: Phaser.Math.Between(2, 6),
+        length: Phaser.Math.Between(5, 20),
+        chars: this.generateRainString(Phaser.Math.Between(5, 20))
+      });
+    }
+
+    // Rain graphics (cleared each frame)
+    this.rainGraphics = this.add.graphics().setDepth(1);
+
+    // ── Capa 3: Partículas flotantes ──
+    this.particles = [];
+    for (let i = 0; i < 40; i++) {
+      this.particles.push({
+        x: Phaser.Math.Between(0, W),
+        y: Phaser.Math.Between(0, H),
+        vx: Phaser.Math.FloatBetween(-0.3, 0.3),
+        vy: Phaser.Math.FloatBetween(-0.2, -0.6),
+        size: Phaser.Math.FloatBetween(0.5, 2),
+        alpha: Phaser.Math.FloatBetween(0.1, 0.5)
+      });
+    }
+
+    // ── Capa 4: Título glitch ──
+    this.titleText = this.add.text(W / 2, H * 0.28, 'D.O.S', {
+      fontSize: Math.min(110, Math.floor(W * 0.14)) + 'px',
+      fontFamily: 'Courier New, monospace',
+      fontStyle: 'bold',
+      color: '#00ff41',
+      stroke: '#003300',
+      strokeThickness: 4
+    }).setOrigin(0.5).setAlpha(0);
+
+    // Neon glow behind title (multiple text layers)
+    this.titleGlow1 = this.add.text(W / 2, H * 0.28, 'D.O.S', {
+      fontSize: Math.min(110, Math.floor(W * 0.14)) + 'px',
+      fontFamily: 'Courier New, monospace',
+      fontStyle: 'bold',
+      color: '#00ff41',
+      stroke: '#00ff41',
+      strokeThickness: 20
+    }).setOrigin(0.5).setAlpha(0.15);
+
+    this.titleGlow2 = this.add.text(W / 2, H * 0.28, 'D.O.S', {
+      fontSize: Math.min(110, Math.floor(W * 0.14)) + 'px',
+      fontFamily: 'Courier New, monospace',
+      fontStyle: 'bold',
+      color: '#00ff41',
+      stroke: '#00ff41',
+      strokeThickness: 40
+    }).setOrigin(0.5).setAlpha(0.06);
+
+    // ── Subtitle ──
+    this.subtitle = this.add.text(W / 2, H * 0.28 + Math.min(60, Math.floor(W * 0.08)), 'DAVID OPERATION SYSTEM', {
+      fontSize: Math.min(18, Math.floor(W * 0.028)) + 'px',
+      fontFamily: 'Courier New, monospace',
+      color: '#888',
+      letterSpacing: 8
+    }).setOrigin(0.5).setAlpha(0);
+
+    // ── Tagline ──
+    this.tagline = this.add.text(W / 2, H * 0.28 + Math.min(85, Math.floor(W * 0.11)), '/// HACK THE SYSTEM ///', {
+      fontSize: Math.min(13, Math.floor(W * 0.02)) + 'px',
+      fontFamily: 'Courier New, monospace',
+      color: '#ff0044'
+    }).setOrigin(0.5).setAlpha(0);
+
+    // ── Version text ──
+    this.versionText = this.add.text(W - 15, H - 15, 'v1.0 // BUILD 2026', {
+      fontSize: '10px',
+      fontFamily: 'Courier New, monospace',
+      color: '#444'
+    }).setOrigin(1, 1).setAlpha(0);
+
+    // ── Botón START ──
+    const btnW = Math.min(260, W * 0.55);
+    const btnH = 56;
+    const btnX = W / 2;
+    const btnY = H * 0.68;
+
+    // Botón background
+    this.btnBg = this.add.graphics();
+    this.btnAlpha = 0;
+    this.btnPulse = 0;
+
+    // Botón texto
+    this.btnText = this.add.text(btnX, btnY, '>  INITIALIZE  <', {
+      fontSize: Math.min(22, Math.floor(W * 0.035)) + 'px',
+      fontFamily: 'Courier New, monospace',
+      fontStyle: 'bold',
+      color: '#00ff41'
+    }).setOrigin(0.5).setAlpha(0);
+
+    // Botón glow
+    this.btnGlow = this.add.graphics();
+
+    // Botón interactivo invisible
+    this.btnZone = this.add.zone(btnX, btnY, btnW, btnH).setInteractive({ useHandCursor: true });
+    this.btnZone.on('pointerover', () => { this.hovered = true; });
+    this.btnZone.on('pointerout', () => { this.hovered = false; });
+    this.btnZone.on('pointerdown', () => {
+      this.startGame();
+    });
+
+    this.hovered = false;
+    this.btnVisible = false;
+    this.canStart = false;
+
+    // ── Animación de entrada ──
+    this.entryProgress = 0;
+    this.entryPhase = 0; // 0=title, 1=subtitle, 2=tagline, 3=button, 4=ready
+
+    // ── Glitch timer ──
+    this.glitchTimer = 0;
+    this.originalTitle = 'D.O.S';
+    this.glitchTitle = 'D.O.S';
+
+    // ── Efecto scanline (overlay) ──
+    this.scanlines = this.add.graphics();
+
+    // ── Arranque: sonido de inicio simulado con Web Audio ──
+    this.playStartupSound();
+  }
+
+  generateRainString(len) {
+    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';
+    let s = '';
+    for (let i = 0; i < len; i++) s += chars[Math.floor(Math.random() * chars.length)];
+    return s;
+  }
+
+  playStartupSound() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      // Low hum
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(55, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + 0.8);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 1.2);
+
+      // Startup beep
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'square';
+      osc2.frequency.setValueAtTime(880, ctx.currentTime + 0.3);
+      osc2.frequency.setValueAtTime(660, ctx.currentTime + 0.5);
+      osc2.frequency.setValueAtTime(1320, ctx.currentTime + 0.7);
+      gain2.gain.setValueAtTime(0.06, ctx.currentTime + 0.3);
+      gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.start(ctx.currentTime + 0.3);
+      osc2.stop(ctx.currentTime + 1.0);
+    } catch(e) {}
+  }
+
+  drawGrid() {
+    const W = this.cameras.main.width;
+    const H = this.cameras.main.height;
+    const g = this.gridGraphics;
+    g.clear();
+
+    const spacing = 40;
+    const offset = this.gridOffset;
+
+    g.lineStyle(0.5, 0x003300, 0.3);
+    for (let x = 0; x < W; x += spacing) {
+      g.beginPath();
+      g.moveTo(x, 0);
+      g.lineTo(x, H);
+      g.strokePath();
+    }
+    for (let y = -spacing + (offset % spacing); y < H; y += spacing) {
+      g.beginPath();
+      g.moveTo(0, y);
+      g.lineTo(W, y);
+      g.strokePath();
+    }
+
+    // Intersecciones brillantes
+    g.fillStyle(0x00ff41, 0.15);
+    for (let x = 0; x < W; x += spacing) {
+      for (let y = -spacing + (offset % spacing); y < H; y += spacing) {
+        g.fillRect(x - 1, y - 1, 2, 2);
+      }
+    }
+  }
+
+  // Rain drawn in update() via rainGraphics
+
+  drawScanlines() {
+    const W = this.cameras.main.width;
+    const H = this.cameras.main.height;
+    const g = this.scanlines;
+    g.clear();
+
+    // Horizontal scanlines
+    g.fillStyle(0x000000, 0.03);
+    for (let y = 0; y < H; y += 3) {
+      g.fillRect(0, y, W, 1);
+    }
+
+    // Vignette
+    const vignette = this.add.graphics();
+    // Radial gradient approximation
+    const steps = 20;
+    for (let i = 0; i < steps; i++) {
+      const t = i / steps;
+      const alpha = t * t * 0.6;
+      vignette.fillStyle(0x000000, alpha);
+      vignette.fillRect(0, 0, W, H);
+    }
+    vignette.setBlendMode(Phaser.BlendModes.MULTIPLY);
+    this.vignette = vignette;
+  }
+
+  startGame() {
+    if (!this.canStart) return;
+    this.canStart = false;
+
+    // Fade out with glitch effect
+    this.time.addEvent({
+      delay: 50,
+      repeat: 10,
+      callback: () => {
+        this.cameras.main.flash(50, 0, 255, 65);
+      }
+    });
+
+    this.cameras.main.fadeOut(800, 0, 0, 0);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.scene.start('GameScene');
+    });
+  }
+
+  update(time, delta) {
+    const W = this.cameras.main.width;
+    const H = this.cameras.main.height;
+
+    // ── Grid animation ──
+    this.gridOffset += this.gridSpeed * (delta / 16);
+    this.drawGrid();
+
+    // ── Rain animation ──
+    this.rainGraphics.clear();
+    for (const drop of this.rainDrops) {
+      drop.y += drop.speed * (delta / 16);
+      if (drop.y > H + 20) {
+        drop.y = -drop.length * 14;
+        drop.x = Phaser.Math.Between(0, W);
+        drop.chars = this.generateRainString(Phaser.Math.Between(5, 20));
+      }
+      const alpha = Phaser.Math.Clamp(1 - (drop.y / H), 0.05, 0.35);
+      this.rainGraphics.fillStyle(0x00ff41, alpha * 0.8);
+      this.rainGraphics.fillRect(drop.x - 2, drop.y - 5, 4, 5);
+      this.rainGraphics.fillStyle(0x00ff41, alpha * 0.06);
+      this.rainGraphics.fillRect(drop.x - 0.5, drop.y, 1, drop.length * 12);
+    }
+
+    // ── Entry animation (cascade) ──
+    this.entryProgress += delta / 1000;
+
+    if (this.entryProgress > 1.0 && !this.titleShown) {
+      this.titleShown = true;
+      this.tweens.add({ targets: [this.titleText, this.titleGlow1, this.titleGlow2], alpha: { from: 0, to: 1 }, duration: 800, ease: 'Power2' });
+      const originalTitle = this.titleText.text;
+      // Glitch entrance
+      this.time.addEvent({
+        delay: 100, repeat: 5,
+        callback: () => {
+          this.titleText.setText(this.glitchText(originalTitle));
+        }
+      });
+      this.time.delayedCall(600, () => { this.titleText.setText(originalTitle); });
+    }
+
+    if (this.entryProgress > 2.0 && !this.subShown) {
+      this.subShown = true;
+      this.tweens.add({ targets: this.subtitle, alpha: 1, duration: 600, ease: 'Power2' });
+    }
+
+    if (this.entryProgress > 3.0 && !this.tagShown) {
+      this.tagShown = true;
+      this.tweens.add({ targets: this.tagline, alpha: 0.7, duration: 500, ease: 'Power2' });
+    }
+
+    if (this.entryProgress > 4.0 && !this.btnShown) {
+      this.btnShown = true;
+      this.btnVisible = true;
+      this.tweens.add({ targets: [this.btnText, this.versionText], alpha: 1, duration: 600, ease: 'Power2' });
+      this.time.delayedCall(500, () => { this.canStart = true; });
+    }
+
+    // ── Glitch effect on title (occasional) ──
+    this.glitchTimer += delta;
+    if (this.glitchTimer > Phaser.Math.Between(2000, 5000) && this.titleShown) {
+      this.glitchTimer = 0;
+      this.glitchTitle = this.titleText.text;
+      const glitchCount = Phaser.Math.Between(1, 4);
+      let count = 0;
+      const glitchInterval = this.time.addEvent({
+        delay: 50,
+        repeat: glitchCount * 2,
+        callback: () => {
+          count++;
+          if (count % 2 === 1) {
+            this.titleText.setText(this.glitchText(this.originalTitle));
+            // White flash
+            this.titleText.setColor('#ffffff');
+          } else {
+            this.titleText.setText(this.originalTitle);
+            this.titleText.setColor('#00ff41');
+          }
+        }
+      });
+    }
+
+    // ── Botón pulsante ──
+    if (this.btnVisible) {
+      this.btnPulse += delta / 1000;
+      const pulse = 0.6 + 0.4 * Math.sin(this.btnPulse * 2.5);
+      const btnW = Math.min(260, W * 0.55);
+      const btnX = W / 2;
+      const btnY = H * 0.68;
+
+      this.btnBg.clear();
+      this.btnBg.fillStyle(0x003300, 0.08 * pulse);
+      this.btnBg.fillRoundedRect(btnX - btnW/2, btnY - 28, btnW, 56, 4);
+      this.btnBg.lineStyle(1, 0x00ff41, 0.4 * pulse);
+      this.btnBg.strokeRoundedRect(btnX - btnW/2, btnY - 28, btnW, 56, 4);
+
+      // Glow on hover
+      this.btnGlow.clear();
+      if (this.hovered) {
+        this.btnGlow.fillStyle(0x00ff41, 0.05);
+        this.btnGlow.fillRoundedRect(btnX - btnW/2 - 10, btnY - 38, btnW + 20, 76, 8);
+        this.btnText.setColor('#ffffff');
+      } else {
+        this.btnText.setColor('#00ff41');
+      }
+
+      // Blink cursor on button
+      const cursor = Math.sin(this.btnPulse * 4) > 0 ? '_' : ' ';
+      this.btnText.setText('>  INITIALIZE' + cursor + '  <');
+    }
+
+    // ── Rain graphics cleanup ──
+    // Keep only the latest rain graphics
+  }
+
+  glitchText(str) {
+    const chars = '!@#$%^&*<>?/\\|[]{}';
+    let result = '';
+    for (const c of str) {
+      if (Math.random() < 0.3) {
+        result += chars[Math.floor(Math.random() * chars.length)];
+      } else {
+        result += c;
+      }
+    }
+    return result;
+  }
+}
+
+// ─── SCENE: GAME (placeholder) ─────────────────────────────────────────────
+class GameScene extends Phaser.Scene {
+  constructor() { super('GameScene'); }
+
+  create() {
+    const W = this.cameras.main.width;
+    const H = this.cameras.main.height;
+
+    // Placeholder
+    this.add.text(W/2, H/2, 'GAME LOADING...', {
+      fontSize: '24px', fontFamily: 'Courier New, monospace', color: '#00ff41'
+    }).setOrigin(0.5);
+
+    this.add.text(W/2, H/2 + 50, 'Press SPACE to return', {
+      fontSize: '14px', fontFamily: 'Courier New, monospace', color: '#666'
+    }).setOrigin(0.5);
+
+    this.input.keyboard.on('keydown-ENTER', () => { if (this.canStart) this.startGame(); });
+    this.input.keyboard.on('keydown-SPACE', () => { if (this.canStart) this.startGame(); });
+    this.input.keyboard.once('keydown-SPACE', () => {
+      this.cameras.main.fadeOut(500, 0, 0, 0);
+      this.cameras.main.once('camerafadeoutcomplete', () => {
+        this.scene.start('MenuScene');
+      });
+    });
+  }
+}
+
+// ─── GAME CONFIG ───────────────────────────────────────────────────────────
+const config = {
+  type: Phaser.AUTO,
+  parent: 'game-container',
+  width: Math.min(window.innerWidth, 800),
+  height: Math.min(window.innerHeight, 900),
+  backgroundColor: '#05050a',
+  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+  scene: [MenuScene, GameScene]
+};
+
+const game = new Phaser.Game(config);
+
+// Resize handler
+window.addEventListener('resize', () => {
+  // Phaser Scale.FIT handles resize automatically
+});
+</script>
+</body>
+</html>
